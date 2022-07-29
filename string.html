@@ -1,0 +1,1138 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.1/crc32.min.js"></script>
+<script>"use strict";const maxInt=2147483647,base=36,tMin=1,tMax=26,skew=38,damp=700,initialBias=72,initialN=128,delimiter="-",regexPunycode=/^xn--/,regexNonASCII=/[^\0-\x7E]/,regexSeparators=/[\x2E\u3002\uFF0E\uFF61]/g,errors={overflow:"Overflow: input needs wider integers to process","not-basic":"Illegal input >= 0x80 (not a basic code point)","invalid-input":"Invalid input"},baseMinusTMin=base-tMin,floor=Math.floor,stringFromCharCode=String.fromCharCode;function error(e){throw new RangeError(errors[e])}function map(e,o){const r=[];let t=e.length;for(;t--;)r[t]=o(e[t]);return r}function mapDomain(e,o){var r=e.split("@");let t="";1<r.length&&(t=r[0]+"@",e=r[1]);o=map((e=e.replace(regexSeparators,".")).split("."),o).join(".");return t+o}function ucs2decode(e){const o=[];let r=0;for(var t=e.length;r<t;){var n,i=e.charCodeAt(r++);55296<=i&&i<=56319&&r<t?56320==(64512&(n=e.charCodeAt(r++)))?o.push(((1023&i)<<10)+(1023&n)+65536):(o.push(i),r--):o.push(i)}return o}const ucs2encode=e=>String.fromCodePoint(...e),basicToDigit=function(e){return e-48<10?e-22:e-65<26?e-65:e-97<26?e-97:base},digitToBasic=function(e,o){return e+22+75*(e<26)-((0!=o)<<5)},adapt=function(e,o,r){let t=0;for(e=r?floor(e/damp):e>>1,e+=floor(e/o);e>baseMinusTMin*tMax>>1;t+=base)e=floor(e/baseMinusTMin);return floor(t+(baseMinusTMin+1)*e/(e+skew))},punydecode=function(t){const o=[];var n=t.length;let i=0,e=initialN,a=initialBias,s=t.lastIndexOf(delimiter);s<0&&(s=0);for(let e=0;e<s;++e)128<=t.charCodeAt(e)&&error("not-basic"),o.push(t.charCodeAt(e));for(let r=0<s?s+1:0;r<n;){var c=i;for(let e=1,o=base;;o+=base){r>=n&&error("invalid-input");var d=basicToDigit(t.charCodeAt(r++));(d>=base||d>floor((maxInt-i)/e))&&error("overflow"),i+=d*e;var l=o<=a?tMin:o>=a+tMax?tMax:o-a;if(d<l)break;l=base-l;e>floor(maxInt/l)&&error("overflow"),e*=l}var u=o.length+1;a=adapt(i-c,u,0==c),floor(i/u)>maxInt-e&&error("overflow"),e+=floor(i/u),i%=u,o.splice(i++,0,e)}return String.fromCodePoint(...o)},punyencode=function(o){const r=[];var e=(o=ucs2decode(o)).length;let t=initialN,n=0,i=initialBias;for(const f of o)f<128&&r.push(stringFromCharCode(f));var a=r.length;let s=a;for(a&&r.push(delimiter);s<e;){let e=maxInt;for(const p of o)p>=t&&p<e&&(e=p);var c=s+1;e-t>floor((maxInt-n)/c)&&error("overflow"),n+=(e-t)*c,t=e;for(const g of o)if(g<t&&++n>maxInt&&error("overflow"),g==t){let o=n;for(let e=base;;e+=base){var d=e<=i?tMin:e>=i+tMax?tMax:e-i;if(o<d)break;var l=o-d,u=base-d;r.push(stringFromCharCode(digitToBasic(d+l%u,0))),o=floor(l/u)}r.push(stringFromCharCode(digitToBasic(o,0))),i=adapt(n,c,s==a),n=0,++s}++n,++t}return r.join("")},toUnicode=function(e){return mapDomain(e,function(e){return regexPunycode.test(e)?punydecode(e.slice(4).toLowerCase()):e})},toASCII=function(e){return mapDomain(e,function(e){return regexNonASCII.test(e)?"xn--"+punyencode(e):e})},punycode={version:"2.1.0",ucs2:{punydecode:ucs2decode,punyencode:ucs2encode},punydecode:punydecode,punyencode:punyencode,toASCII:toASCII,toUnicode:toUnicode};</script>
+<script>
+    // MD5
+    !function(){"use strict";function t(t){if(t)d[0]=d[16]=d[1]=d[2]=d[3]=d[4]=d[5]=d[6]=d[7]=d[8]=d[9]=d[10]=d[11]=d[12]=d[13]=d[14]=d[15]=0,this.blocks=d,this.buffer8=l;else if(a){var r=new ArrayBuffer(68);this.buffer8=new Uint8Array(r),this.blocks=new Uint32Array(r)}else this.blocks=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];this.h0=this.h1=this.h2=this.h3=this.start=this.bytes=this.hBytes=0,this.finalized=this.hashed=!1,this.first=!0}var r="input is invalid type",e="object"==typeof window,i=e?window:{};i.JS_MD5_NO_WINDOW&&(e=!1);var s=!e&&"object"==typeof self,h=!i.JS_MD5_NO_NODE_JS&&"object"==typeof process&&process.versions&&process.versions.node;h?i=global:s&&(i=self);var f=!i.JS_MD5_NO_COMMON_JS&&"object"==typeof module&&module.exports,o="function"==typeof define&&define.amd,a=!i.JS_MD5_NO_ARRAY_BUFFER&&"undefined"!=typeof ArrayBuffer,n="0123456789abcdef".split(""),u=[128,32768,8388608,-2147483648],y=[0,8,16,24],c=["hex","array","digest","buffer","arrayBuffer","base64"],p="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""),d=[],l;if(a){var A=new ArrayBuffer(68);l=new Uint8Array(A),d=new Uint32Array(A)}!i.JS_MD5_NO_NODE_JS&&Array.isArray||(Array.isArray=function(t){return"[object Array]"===Object.prototype.toString.call(t)}),!a||!i.JS_MD5_NO_ARRAY_BUFFER_IS_VIEW&&ArrayBuffer.isView||(ArrayBuffer.isView=function(t){return"object"==typeof t&&t.buffer&&t.buffer.constructor===ArrayBuffer});var b=function(r){return function(e){return new t(!0).update(e)[r]()}},v=function(){var r=b("hex");h&&(r=w(r)),r.create=function(){return new t},r.update=function(t){return r.create().update(t)};for(var e=0;e<c.length;++e){var i=c[e];r[i]=b(i)}return r},w=function(t){var e=eval("require('crypto')"),i=eval("require('buffer').Buffer"),s=function(s){if("string"==typeof s)return e.createHash("md5").update(s,"utf8").digest("hex");if(null===s||void 0===s)throw r;return s.constructor===ArrayBuffer&&(s=new Uint8Array(s)),Array.isArray(s)||ArrayBuffer.isView(s)||s.constructor===i?e.createHash("md5").update(new i(s)).digest("hex"):t(s)};return s};t.prototype.update=function(t){if(!this.finalized){var e,i=typeof t;if("string"!==i){if("object"!==i)throw r;if(null===t)throw r;if(a&&t.constructor===ArrayBuffer)t=new Uint8Array(t);else if(!(Array.isArray(t)||a&&ArrayBuffer.isView(t)))throw r;e=!0}for(var s,h,f=0,o=t.length,n=this.blocks,u=this.buffer8;f<o;){if(this.hashed&&(this.hashed=!1,n[0]=n[16],n[16]=n[1]=n[2]=n[3]=n[4]=n[5]=n[6]=n[7]=n[8]=n[9]=n[10]=n[11]=n[12]=n[13]=n[14]=n[15]=0),e)if(a)for(h=this.start;f<o&&h<64;++f)u[h++]=t[f];else for(h=this.start;f<o&&h<64;++f)n[h>>2]|=t[f]<<y[3&h++];else if(a)for(h=this.start;f<o&&h<64;++f)(s=t.charCodeAt(f))<128?u[h++]=s:s<2048?(u[h++]=192|s>>6,u[h++]=128|63&s):s<55296||s>=57344?(u[h++]=224|s>>12,u[h++]=128|s>>6&63,u[h++]=128|63&s):(s=65536+((1023&s)<<10|1023&t.charCodeAt(++f)),u[h++]=240|s>>18,u[h++]=128|s>>12&63,u[h++]=128|s>>6&63,u[h++]=128|63&s);else for(h=this.start;f<o&&h<64;++f)(s=t.charCodeAt(f))<128?n[h>>2]|=s<<y[3&h++]:s<2048?(n[h>>2]|=(192|s>>6)<<y[3&h++],n[h>>2]|=(128|63&s)<<y[3&h++]):s<55296||s>=57344?(n[h>>2]|=(224|s>>12)<<y[3&h++],n[h>>2]|=(128|s>>6&63)<<y[3&h++],n[h>>2]|=(128|63&s)<<y[3&h++]):(s=65536+((1023&s)<<10|1023&t.charCodeAt(++f)),n[h>>2]|=(240|s>>18)<<y[3&h++],n[h>>2]|=(128|s>>12&63)<<y[3&h++],n[h>>2]|=(128|s>>6&63)<<y[3&h++],n[h>>2]|=(128|63&s)<<y[3&h++]);this.lastByteIndex=h,this.bytes+=h-this.start,h>=64?(this.start=h-64,this.hash(),this.hashed=!0):this.start=h}return this.bytes>4294967295&&(this.hBytes+=this.bytes/4294967296<<0,this.bytes=this.bytes%4294967296),this}},t.prototype.finalize=function(){if(!this.finalized){this.finalized=!0;var t=this.blocks,r=this.lastByteIndex;t[r>>2]|=u[3&r],r>=56&&(this.hashed||this.hash(),t[0]=t[16],t[16]=t[1]=t[2]=t[3]=t[4]=t[5]=t[6]=t[7]=t[8]=t[9]=t[10]=t[11]=t[12]=t[13]=t[14]=t[15]=0),t[14]=this.bytes<<3,t[15]=this.hBytes<<3|this.bytes>>>29,this.hash()}},t.prototype.hash=function(){var t,r,e,i,s,h,f=this.blocks;this.first?r=((r=((t=((t=f[0]-680876937)<<7|t>>>25)-271733879<<0)^(e=((e=(-271733879^(i=((i=(-1732584194^2004318071&t)+f[1]-117830708)<<12|i>>>20)+t<<0)&(-271733879^t))+f[2]-1126478375)<<17|e>>>15)+i<<0)&(i^t))+f[3]-1316259209)<<22|r>>>10)+e<<0:(t=this.h0,r=this.h1,e=this.h2,r=((r+=((t=((t+=((i=this.h3)^r&(e^i))+f[0]-680876936)<<7|t>>>25)+r<<0)^(e=((e+=(r^(i=((i+=(e^t&(r^e))+f[1]-389564586)<<12|i>>>20)+t<<0)&(t^r))+f[2]+606105819)<<17|e>>>15)+i<<0)&(i^t))+f[3]-1044525330)<<22|r>>>10)+e<<0),r=((r+=((t=((t+=(i^r&(e^i))+f[4]-176418897)<<7|t>>>25)+r<<0)^(e=((e+=(r^(i=((i+=(e^t&(r^e))+f[5]+1200080426)<<12|i>>>20)+t<<0)&(t^r))+f[6]-1473231341)<<17|e>>>15)+i<<0)&(i^t))+f[7]-45705983)<<22|r>>>10)+e<<0,r=((r+=((t=((t+=(i^r&(e^i))+f[8]+1770035416)<<7|t>>>25)+r<<0)^(e=((e+=(r^(i=((i+=(e^t&(r^e))+f[9]-1958414417)<<12|i>>>20)+t<<0)&(t^r))+f[10]-42063)<<17|e>>>15)+i<<0)&(i^t))+f[11]-1990404162)<<22|r>>>10)+e<<0,r=((r+=((t=((t+=(i^r&(e^i))+f[12]+1804603682)<<7|t>>>25)+r<<0)^(e=((e+=(r^(i=((i+=(e^t&(r^e))+f[13]-40341101)<<12|i>>>20)+t<<0)&(t^r))+f[14]-1502002290)<<17|e>>>15)+i<<0)&(i^t))+f[15]+1236535329)<<22|r>>>10)+e<<0,r=((r+=((i=((i+=(r^e&((t=((t+=(e^i&(r^e))+f[1]-165796510)<<5|t>>>27)+r<<0)^r))+f[6]-1069501632)<<9|i>>>23)+t<<0)^t&((e=((e+=(t^r&(i^t))+f[11]+643717713)<<14|e>>>18)+i<<0)^i))+f[0]-373897302)<<20|r>>>12)+e<<0,r=((r+=((i=((i+=(r^e&((t=((t+=(e^i&(r^e))+f[5]-701558691)<<5|t>>>27)+r<<0)^r))+f[10]+38016083)<<9|i>>>23)+t<<0)^t&((e=((e+=(t^r&(i^t))+f[15]-660478335)<<14|e>>>18)+i<<0)^i))+f[4]-405537848)<<20|r>>>12)+e<<0,r=((r+=((i=((i+=(r^e&((t=((t+=(e^i&(r^e))+f[9]+568446438)<<5|t>>>27)+r<<0)^r))+f[14]-1019803690)<<9|i>>>23)+t<<0)^t&((e=((e+=(t^r&(i^t))+f[3]-187363961)<<14|e>>>18)+i<<0)^i))+f[8]+1163531501)<<20|r>>>12)+e<<0,r=((r+=((i=((i+=(r^e&((t=((t+=(e^i&(r^e))+f[13]-1444681467)<<5|t>>>27)+r<<0)^r))+f[2]-51403784)<<9|i>>>23)+t<<0)^t&((e=((e+=(t^r&(i^t))+f[7]+1735328473)<<14|e>>>18)+i<<0)^i))+f[12]-1926607734)<<20|r>>>12)+e<<0,r=((r+=((h=(i=((i+=((s=r^e)^(t=((t+=(s^i)+f[5]-378558)<<4|t>>>28)+r<<0))+f[8]-2022574463)<<11|i>>>21)+t<<0)^t)^(e=((e+=(h^r)+f[11]+1839030562)<<16|e>>>16)+i<<0))+f[14]-35309556)<<23|r>>>9)+e<<0,r=((r+=((h=(i=((i+=((s=r^e)^(t=((t+=(s^i)+f[1]-1530992060)<<4|t>>>28)+r<<0))+f[4]+1272893353)<<11|i>>>21)+t<<0)^t)^(e=((e+=(h^r)+f[7]-155497632)<<16|e>>>16)+i<<0))+f[10]-1094730640)<<23|r>>>9)+e<<0,r=((r+=((h=(i=((i+=((s=r^e)^(t=((t+=(s^i)+f[13]+681279174)<<4|t>>>28)+r<<0))+f[0]-358537222)<<11|i>>>21)+t<<0)^t)^(e=((e+=(h^r)+f[3]-722521979)<<16|e>>>16)+i<<0))+f[6]+76029189)<<23|r>>>9)+e<<0,r=((r+=((h=(i=((i+=((s=r^e)^(t=((t+=(s^i)+f[9]-640364487)<<4|t>>>28)+r<<0))+f[12]-421815835)<<11|i>>>21)+t<<0)^t)^(e=((e+=(h^r)+f[15]+530742520)<<16|e>>>16)+i<<0))+f[2]-995338651)<<23|r>>>9)+e<<0,r=((r+=((i=((i+=(r^((t=((t+=(e^(r|~i))+f[0]-198630844)<<6|t>>>26)+r<<0)|~e))+f[7]+1126891415)<<10|i>>>22)+t<<0)^((e=((e+=(t^(i|~r))+f[14]-1416354905)<<15|e>>>17)+i<<0)|~t))+f[5]-57434055)<<21|r>>>11)+e<<0,r=((r+=((i=((i+=(r^((t=((t+=(e^(r|~i))+f[12]+1700485571)<<6|t>>>26)+r<<0)|~e))+f[3]-1894986606)<<10|i>>>22)+t<<0)^((e=((e+=(t^(i|~r))+f[10]-1051523)<<15|e>>>17)+i<<0)|~t))+f[1]-2054922799)<<21|r>>>11)+e<<0,r=((r+=((i=((i+=(r^((t=((t+=(e^(r|~i))+f[8]+1873313359)<<6|t>>>26)+r<<0)|~e))+f[15]-30611744)<<10|i>>>22)+t<<0)^((e=((e+=(t^(i|~r))+f[6]-1560198380)<<15|e>>>17)+i<<0)|~t))+f[13]+1309151649)<<21|r>>>11)+e<<0,r=((r+=((i=((i+=(r^((t=((t+=(e^(r|~i))+f[4]-145523070)<<6|t>>>26)+r<<0)|~e))+f[11]-1120210379)<<10|i>>>22)+t<<0)^((e=((e+=(t^(i|~r))+f[2]+718787259)<<15|e>>>17)+i<<0)|~t))+f[9]-343485551)<<21|r>>>11)+e<<0,this.first?(this.h0=t+1732584193<<0,this.h1=r-271733879<<0,this.h2=e-1732584194<<0,this.h3=i+271733878<<0,this.first=!1):(this.h0=this.h0+t<<0,this.h1=this.h1+r<<0,this.h2=this.h2+e<<0,this.h3=this.h3+i<<0)},t.prototype.hex=function(){this.finalize();var t=this.h0,r=this.h1,e=this.h2,i=this.h3;return n[t>>4&15]+n[15&t]+n[t>>12&15]+n[t>>8&15]+n[t>>20&15]+n[t>>16&15]+n[t>>28&15]+n[t>>24&15]+n[r>>4&15]+n[15&r]+n[r>>12&15]+n[r>>8&15]+n[r>>20&15]+n[r>>16&15]+n[r>>28&15]+n[r>>24&15]+n[e>>4&15]+n[15&e]+n[e>>12&15]+n[e>>8&15]+n[e>>20&15]+n[e>>16&15]+n[e>>28&15]+n[e>>24&15]+n[i>>4&15]+n[15&i]+n[i>>12&15]+n[i>>8&15]+n[i>>20&15]+n[i>>16&15]+n[i>>28&15]+n[i>>24&15]},t.prototype.toString=t.prototype.hex,t.prototype.digest=function(){this.finalize();var t=this.h0,r=this.h1,e=this.h2,i=this.h3;return[255&t,t>>8&255,t>>16&255,t>>24&255,255&r,r>>8&255,r>>16&255,r>>24&255,255&e,e>>8&255,e>>16&255,e>>24&255,255&i,i>>8&255,i>>16&255,i>>24&255]},t.prototype.array=t.prototype.digest,t.prototype.arrayBuffer=function(){this.finalize();var t=new ArrayBuffer(16),r=new Uint32Array(t);return r[0]=this.h0,r[1]=this.h1,r[2]=this.h2,r[3]=this.h3,t},t.prototype.buffer=t.prototype.arrayBuffer,t.prototype.base64=function(){for(var t,r,e,i="",s=this.array(),h=0;h<15;)t=s[h++],r=s[h++],e=s[h++],i+=p[t>>>2]+p[63&(t<<4|r>>>4)]+p[63&(r<<2|e>>>6)]+p[63&e];return t=s[h],i+=p[t>>>2]+p[t<<4&63]+"=="};var _=v();f?module.exports=_:(i.md5=_,o&&define(function(){return _}))}();
+    var str_history = [""]
+    if (navigator.storage && navigator.storage.persist) {
+        const isPersisted = navigator.storage.persist();
+    }
+    function setString(value) {
+        if (b_set.checked) {
+            i_str.value = value
+        } else if (b_append.checked) {
+            i_str.value += value
+        } else if (b_prepend.checked) {
+            i_str.value = value + i_str.value
+        }
+    }
+    let alertHeight = 10
+    const smallCapsMap = {a: "ᴀ",
+        b: "ʙ",
+        c: "ᴄ",
+        d: "ᴅ",
+        e: "ᴇ",
+        f: "ғ",
+        g: "ɢ",
+        h: "ʜ",
+        i: "ɪ",
+        j: "ᴊ",
+        k: "ᴋ",
+        l: "ʟ",
+        m: "ᴍ",
+        n: "ɴ",
+        o: "ᴏ",
+        p: "ᴘ",
+        q: "ǫ",
+        r: "ʀ",
+        s: "s",
+        t: "ᴛ",
+        u: "ᴜ",
+        v: "ᴠ",
+        w: "ᴡ",
+        x: "x",
+        y: "ʏ",
+        z: "ᴢ"
+    }
+    const phoneticMap = {a: "Alpha",
+        b: "Bravo",
+        c: "Charlie",
+        d: "Delta",
+        e: "Echo",
+        f: "Foxtrot",
+        g: "Golf",
+        h: "Hotel",
+        i: "India",
+        j: "Juliet",
+        k: "Kilo",
+        l: "Lima",
+        m: "Mike",
+        n: "November",
+        o: "Oscar",
+        p: "Papa",
+        q: "Quebec",
+        r: "Romeo",
+        s: "Sierra",
+        t: "Tango",
+        u: "Uniform",
+        v: "Victor",
+        w: "Whiskey",
+        x: "X-Ray",
+        y: "Yankee",
+        z: "Zulu"
+    }
+    let fullwidthMap = {
+        "!": "！",
+        '"': "＂",
+        "#": "＃",
+        "$": "＄",
+        "%": "％",
+        "&": "＆",
+        "'": "＇",
+        "(": "（",
+        ")": "）",
+        "*": "＊",
+        "+": "＋",
+        ",": "，",
+        "-": "－",
+        ".": "．",
+        "/": "／",
+        "0": "０",
+        "1": "１",
+        "2": "２",
+        "3": "３",
+        "4": "４",
+        "5": "５",
+        "6": "６",
+        "7": "７",
+        "8": "８",
+        "9": "９",
+        ":": "：",
+        ";": "；",
+        "<": "＜",
+        "=": "＝",
+        ">": "＞",
+        "?": "？",
+        "@": "＠",
+        "A": "Ａ",
+        "B": "Ｂ",
+        "C": "Ｃ",
+        "D": "Ｄ",
+        "E": "Ｅ",
+        "F": "Ｆ",
+        "G": "Ｇ",
+        "H": "Ｈ",
+        "I": "Ｉ",
+        "J": "Ｊ",
+        "K": "Ｋ",
+        "L": "Ｌ",
+        "M": "Ｍ",
+        "N": "Ｎ",
+        "O": "Ｏ",
+        "P": "Ｐ",
+        "Q": "Ｑ",
+        "R": "Ｒ",
+        "S": "Ｓ",
+        "T": "Ｔ",
+        "U": "Ｕ",
+        "V": "Ｖ",
+        "W": "Ｗ",
+        "X": "Ｘ",
+        "Y": "Ｙ",
+        "Z": "Ｚ",
+        "[": "［",
+        "\\": "＼",
+        "]": "］",
+        "^": "＾",
+        "_": "＿",
+        "`": "｀",
+        "a": "ａ",
+        "b": "ｂ",
+        "c": "ｃ",
+        "d": "ｄ",
+        "e": "ｅ",
+        "f": "ｆ",
+        "g": "ｇ",
+        "h": "ｈ",
+        "i": "ｉ",
+        "j": "ｊ",
+        "k": "ｋ",
+        "l": "ｌ",
+        "m": "ｍ",
+        "n": "ｎ",
+        "o": "ｏ",
+        "p": "ｐ",
+        "q": "ｑ",
+        "r": "ｒ",
+        "s": "ｓ",
+        "t": "ｔ",
+        "u": "ｕ",
+        "v": "ｖ",
+        "w": "ｗ",
+        "x": "ｘ",
+        "y": "ｙ",
+        "z": "ｚ",
+        "{": "｛",
+        "|": "｜",
+        "}": "｝",
+        "~": "～",
+        "•": "･",
+        "¢": "￠",
+        "£": "￡",
+        "¯": "￣",
+        "¥": "￥"
+    }
+    function smallCaps(txt) {
+        return txt.split("").map(e => smallCapsMap[e.toLowerCase()] || e).join("")
+    }
+    function phonetic(txt) {
+        return txt.split("").map(e => phoneticMap[e.toLowerCase()] || e).join(" ")
+    }
+    function fullwidth(txt) {
+        return txt.split("").map(e => fullwidthMap[e] || e).join("")
+    }
+    function crc16(buffer) {
+        var crc = 0xFFFF;
+        var odd;
+        buffer = Uint8Array.from(buffer)
+
+        for (var i = 0; i < buffer.length; i++) {
+            crc = crc ^ buffer[i];
+
+            for (var j = 0; j < 8; j++) {
+                odd = crc & 0x0001;
+                crc = crc >> 1;
+                if (odd) {
+                    crc = crc ^ 0xA001;
+                }
+            }
+        }
+
+        return crc;
+    };
+    function htmlEncode(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/ /g, "&nbsp;");
+    }
+    let spaceRegex = /\s|\n/g
+    async function digest(message, algorithm) {
+        const msgBuffer = new TextEncoder('utf-8').encode(message);
+        const hashBuffer = await window.crypto.subtle.digest(algorithm, msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+        return hashHex;
+    }
+    old_alert = alert
+    function alert(title, desc) {
+        alertHeight = Math.max(alertHeight, 10)
+        let div = document.createElement("div")
+        div.className = "alert"
+        let bar = document.createElement("div")
+        bar.className = "alert_bar"
+        div.addEventListener("click", (e) => {
+            if (e.button == 0) {
+                div.remove()
+                alertHeight -= 210
+            }
+        })
+        let titleDiv = document.createElement("h3")
+        titleDiv.innerText = title
+        titleDiv.className = "alert_title"
+        let descDiv = document.createElement("p")
+        descDiv.innerText = desc
+        descDiv.className = "alert_desc"
+        div.style.bottom = alertHeight
+        div.appendChild(bar)
+        div.appendChild(titleDiv)
+        div.appendChild(descDiv)
+        document.body.appendChild(div)
+        alertHeight += 210
+        setTimeout(() => {
+            div.remove()
+            alertHeight -= 210
+        }, 10000)
+    }
+    function allStorage() {
+        document.getElementById("loaded").innerHTML = ""
+        var values = [],
+            keys = Object.keys(localStorage),
+            i = keys.length
+        while ( i-- ) {
+            if(keys[i].startsWith("su_")) {
+                values.push( localStorage.getItem(keys[i]) )
+                document.getElementById("loaded").innerHTML += `<button id="su_${keys[i]}" onclick='i_str.value=localStorage.getItem("${keys[i]}");updateInfo()'>${htmlEncode(keys[i].slice(3))}</button>`
+            }
+        }
+
+        return values
+    }
+    function append(text) {
+        info.innerHTML += `<br>${text}`
+    }
+    function alphanumeric(str) {
+        return !str.match(/[^\w]/)
+    }
+    function capitalize(str) {
+        return str.split(" ").map(a => {if(a[0]) return a[0].toUpperCase() + a.substr(1, a.length).toLowerCase(); return ""}).join(" ")
+    }
+    function copy(val) {
+        navigator.clipboard.writeText(val)
+    }
+    function shuffleCIW(str) {
+        let words = []
+        for(let i of str.split(" ")) {
+            words.push(shuffle(i.split("")).join(""))
+        }
+        return words.join(" ")
+    }
+    function reverseCIW(str) {
+        let words = []
+        for(let i of str.split(" ")) {
+            words.push(i.split("").reverse().join(""))
+        }
+        return words.join(" ")
+    }
+    function polyEncode(str) {
+        let newstr = str.split(" ").join("").split("").join(" ")
+        let table = document.getElementById("polybius");
+        for (let i = 0, row; row = table.rows[i]; i++) {
+            for (let j = 0, col; col = row.cells[j]; j++) {
+                if (!col.childNodes) break
+                col = col.childNodes[0].value
+                if (col.length == 0) continue
+                if(col.split("/").length > 1) {
+                    for(let k of col.split("/")) {
+                        newstr = newstr.replace(new RegExp(k, "gi"), `${i+1}${j+1}`)
+                    }
+                } else {
+                    newstr = newstr.replace(new RegExp(col, "gi"), `${i+1}${j+1}`)
+                }
+            }  
+        }
+        return newstr
+    }
+    function polyDecode(str) {
+        let newstr = []
+        let table = document.getElementById("polybius");
+        for (let i of str.split(" ")) {
+            if (i.length == 2) {
+                newstr.push(table.rows[parseInt(i[0] - 1)].cells[parseInt(i[1] - 1)].childNodes[0].value)
+            }
+        }
+        return newstr.join("")
+        for (let i = 0, row; row = table.rows[i]; i++) {
+            for (let j = 0, col; col = row.cells[j]; j++) {
+                if (!col.childNodes) break
+                col = col.childNodes[0].value
+                if(col.split("/").length > 1) {
+                    for(let k of col.split("/")) {
+                        newstr = newstr.replace(new RegExp(k, "gi"), `${i+1}${j+1}`)
+                    }
+                } else {
+                    newstr = newstr.replace(new RegExp(col, "gi"), `${i+1}${j+1}`)
+                }
+            }  
+        }
+        return newstr
+    }
+    function pigLatin(str) {
+        let vowels = ["A", "E", "I", "O", "U", "a", "e", "i", "o", "u"]
+        let strr = []
+        for(let w of str.split(" ")) {
+            if (vowels.includes(w[0]) || w.length < 3) {
+                strr.push(`${w}way`)
+            } else {
+                strr.push(`${w.substr(1)}${w[0]}ay`)
+            }
+        }
+        return strr.join(" ")
+    }
+    String.prototype.setCharAt = function(index, chr) {
+        if(index > this.length - 1) return this;
+        return this.substr(0, index) + chr + this.substr(index + 1, this.length);
+    }
+    function alphabeticOrder(str, sep) {
+        let arr = str.split(sep)
+        let sorted = arr.sort()
+        return sorted.join(sep)
+    }
+    function alphabeticOrderCIW(str) {
+        let words = []
+        for(let i of str.split(" ")) {
+            words.push(alphabeticOrder(i, ""))
+        }
+        return words.join(" ")
+    }
+    function shuffle(array) {
+        let copy = [], n = array.length, i;
+        while (n) {
+            i = Math.floor(Math.random() * array.length);
+            if (i in array) {
+                copy.push(array[i]);
+                delete array[i];
+                n--;
+            }
+        }
+
+        return copy;
+    }
+    function randomCase(str) {
+        let strnew = ""
+        for(let i of str.split("")) {
+            if(Math.random() < 0.5) {
+                strnew += i.toLowerCase()
+            } else {
+                strnew += i.toUpperCase()
+            }
+        }
+        return strnew
+    }
+    function toUTF8(str) {
+        let strnew = ""
+        for(let i of str.split("")) {
+            let j = i.charCodeAt(0).toString(16).padStart(4, "0")
+            strnew += `\\u${j}`
+        }
+        return strnew
+    }
+    function getRandomInt(min, max) {
+        return min + Math.floor(Math.random() * (max - min + 1));
+    }
+    function randomStr(min, max, chars) {
+        chrs = chars.split("")
+        min = parseInt(min)
+        max = parseInt(max)
+        let newstr = ""
+        let iters = getRandomInt(min, max)
+        for(let i = 0; i < iters; i++) {
+            newstr += chrs[Math.floor(Math.random()*chrs.length)]
+        }
+        return newstr
+    }
+    old_btoa = btoa
+    btoa = function (str) {
+        return old_btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+            function toSolidBytes(match, p1) {
+                return String.fromCharCode('0x' + p1);
+        }));
+    }
+    old_atob = atob
+    atob = function b64DecodeUnicode(str) {
+        return decodeURIComponent(old_atob(str).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    }
+    function ROTn(text, map) {
+        var R = new String()
+        var i, j, c, len = map.length
+        for(i = 0; i < text.length; i++) {
+            c = text.charAt(i)
+            j = map.indexOf(c)
+            if (j >= 0) {
+                c = map.charAt((j + len / 2) % len)
+            }
+            R = R + c
+        }
+        return R;
+    }
+    function mixedCase1(str) {
+        let n = 0
+        let strnew = ""
+        for(let i of str) {
+            if(n % 2 == 0) {
+                strnew += i.toUpperCase()
+            } else {
+                strnew += i.toLowerCase()
+            }
+            n++
+        }
+        return strnew
+    }
+    function reverseCase(str) {
+        let strnew = ""
+        for(let i of str) {
+            if(i.toLowerCase() == i) {
+                strnew += i.toUpperCase()
+            } else {
+                strnew += i.toLowerCase()
+            }
+        }
+        return strnew
+    }
+
+    function caesarEncode(str, key) {
+        let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+        return str.toUpperCase().split("").map(e => alphabet.indexOf(e) != -1 ? alphabet[(alphabet.indexOf(e) + (key % alphabet.length < 0 ? 26 + (key % alphabet.length) : key % alphabet.length)) % alphabet.length] : e).join("")
+    }
+    function caesarDecode(str, key) {
+        return caesarEncode(str, -key)
+    }
+
+    function xor(str, key) { return String.fromCodePoint(...str.split('').map((char, i) => char.charCodeAt(0) ^ key.toString().charCodeAt(i % key.toString().length))) }
+    function xorEncode(str, key) { return btoa(xor(str, key)).replace(/\//g, '_').replace(/\+/g, '-'); }
+    function xorDecode(str, key) { return xor(atob(str.replace(/\//g, '_').replace(/\+/g, '-')).toString(), key) }
+    function mixedCase2(str) {
+        let n = 1
+        let strnew = ""
+        for(let i of str) {
+            if(n % 2 == 0) {
+                strnew += i.toUpperCase()
+            } else {
+                strnew += i.toLowerCase()
+            }
+            n++
+        }
+        return strnew
+    }
+    function updateInfo(undoing) {
+        let str = i_str.value
+        if (!undoing) str_history.push(str)
+        let info = document.getElementById("info")
+        info.innerHTML = ""
+        append(`Length (16-bit units): ${str.length}`)
+        append(`Length: ${[...str].length}`)
+        let words = str.trim().split(/\s|(\r)?\n/)
+        append(`Word count: ${words.length}`)
+        if(alphanumeric(str)) {
+            append("String is alphanumeric")
+        } else {
+            append("String is not alphanumeric")
+        }
+        if(str.toLowerCase() == str && str.toUpperCase() != str) {
+            append("String is lower case")
+        }
+        if(str.toUpperCase() == str && str.toLowerCase() != str) {
+            append("String is upper case")
+        }
+        let chars = {}
+        for (let i of str.split("")) {
+            if(!chars[i]) chars[i] = 0
+            chars[i]++
+        }
+        let word = {}
+        for (let i of str.split(/\s|(\r)?\n/)) {
+            if (i)
+                i = i.replace(/[()\[\]!\.:?,—;"]/g, "").toLowerCase()
+            if(i && !word[i]) word[i] = 0
+            word[i]++
+        }
+        let temps = []
+        for (let i of Object.keys(chars)) {
+            temps.push(`${i.replace(/\n/g, "\\n").replace(/\t/g, "\\t")} (0x${i.codePointAt(0).toString(16)}): ${chars[i]}`)
+        }
+        append(`<details><summary>Character count</summary>${temps.join("<br>")}</details>`)
+        let tempsW = []
+        for (let j of Object.keys(word)) {
+            if(word[j] < 1 || isNaN(word[j])) continue
+            tempsW.push(`${htmlEncode(j)}: ${word[j]}`)
+        }
+        append(`<details><summary>Word count</summary>${tempsW.join("<br>")}</details>`)
+    }
+    const buttonsArray = document.querySelectorAll('button');
+    buttonsArray.forEach(button => button.addEventListener('click', updateInfo))
+</script>
+<div id="str">
+    <label for="i_str">Enter string<br></label>
+    <form>
+        <textarea id="i_str" oninput="if (str_history[str_history.length-1] != i_str.value) {str_history.push(i_str.value);updateInfo()}" name="str" rows="10" cols="100"></textarea>
+    </form>
+</div>
+<div id="basic">
+    <button id="copy" class="basic_e" onclick='copy(i_str.value)'>Copy</button>
+    <button id="clear" class="basic_e" onclick='copy(i_str.value);i_str.value=""'>Cut</button>
+    <button id="paste" class="basic_e" onclick='navigator.clipboard.readText().then(t => {i_str.value += t;updateInfo()})'>Paste</button>
+    <button id="clear" class="basic_e" onclick='i_str.value="";updateInfo()'>Clear</button>
+    <button id="undo" class="basic_e" onclick='if (str_history.length > 1) {str_history.pop();i_str.value=str_history[str_history.length-1]};updateInfo(true)'>Undo</button>
+    <!-- <input type="radio" id="b_set" name="allmode" checked><label for="b_set" id="label_all">Set</label></input>
+    <input type="radio" id="b_append" name="allmode"><label for="b_append" id="label_all">Append</label></input>
+    <input type="radio" id="b_prepend" name="allmode"><label for="b_prepend" id="label_all">Prepend</label></input> -->
+</div>
+<div id="casing" class="draggablemodule">
+    <details>
+    <summary>Casing</summary>
+        <div id="casing_i" class="draggablemoduleinnards">
+            <br>
+            <button id="capitalize_word" onclick='i_str.value=capitalize(i_str.value);updateInfo()'>Capitalize all words</button>
+            <br>
+            <button id="mixed1" onclick='i_str.value=mixedCase1(i_str.value);updateInfo()'>MiXeD cAsE</button>
+            <br>
+            <button id="mixed2" onclick='i_str.value=mixedCase2(i_str.value);updateInfo()'>mIxEd CaSe</button>
+            <br>
+            <button id="lower" onclick='i_str.value=i_str.value.toLowerCase();updateInfo()'>Lower case</button>
+            <br>
+            <button id="random" onclick='i_str.value=randomCase(i_str.value);updateInfo()'>Random case</button>
+            <br>
+            <button id="reverse_c" onclick='i_str.value=reverseCase(i_str.value);updateInfo()'>Reverse case</button>
+            <br>
+            <button id="small" onclick='i_str.value=smallCaps(i_str.value);updateInfo()'>Small caps</button>
+            <br>
+            <button id="upper" onclick='i_str.value=i_str.value.toUpperCase();updateInfo()'>Upper case</button>
+            <br>
+        </div>
+    </details>
+</div>
+<div id="characterorder" class="draggablemodule">
+    <details>
+    <summary>Character order</summary>
+    <div id="characterorder_i" class="draggablemoduleinnards">
+        <br>
+        <button id="alphabet" onclick='i_str.value=alphabeticOrder(i_str.value, "");updateInfo()'>Alphabetically sort characters</button>
+        <br>
+        <button id="alphabet_words" onclick='i_str.value=alphabeticOrderCIW(i_str.value);updateInfo()'>Alphabetically sort characters in words</button>
+        <br>
+        <button id="alphabet_word_order" onclick='i_str.value=alphabeticOrder(i_str.value, " ");updateInfo()'>Alphabetically sort words</button>
+        <br>
+        <button id="reverse" onclick='i_str.value+=i_str.value.split("").reverse().join("");updateInfo()'>Mirror</button>
+        <br>
+        <button id="reverse" onclick='i_str.value=i_str.value.split("").reverse().join("");updateInfo()'>Reverse</button>
+        <br>
+        <button id="reverse" onclick='i_str.value=i_str.value.split("").reverse().join("")+i_str.value;updateInfo()'>Reverse mirror</button>
+        <br>
+        <button id="reverse_words" onclick='i_str.value=reverseCIW(i_str.value);updateInfo()'>Reverse characters in words</button>
+        <br>
+        <button id="reverse_word_order" onclick='i_str.value=i_str.value.split(" ").reverse().join(" ");updateInfo()'>Reverse word order</button>
+        <br>
+        <button id="shuffle" onclick='
+        if (till.checked) {
+            let times = 1
+            while (shuffle(i_str.value.split("")).join("") != till_is.value) {
+                times++
+            }
+            alert(`Shuffle until: Results`, `Got ${till_is.value} in ${times} ${times == 1 ? "try" : "tries"}`)
+        } else {
+             i_str.value = shuffle(i_str.value.split("")).join("") 
+        };
+        updateInfo()
+        '>Shuffle characters</button>
+        <input type="checkbox" onclick="till_is.disabled = !till.checked; till_is.hidden = !till.checked" id="till" title="WARNING: This will most likely crash this page if the string is longer than 10 characters"><label for="till">Until the string is [!]</label></input>
+        <textarea hidden id="till_is" disabled></textarea>
+        <br>
+        <button id="shuffle_words" onclick='if (till_w.checked) {let times = 1; while (shuffleCIW(i_str.value) != till_is.value) {times++}; alert(`Shuffle until: Results`, `Got ${till_is.value} in ${times} tries`)}; i_str.value=shuffleCIW(i_str.value);updateInfo()'>Shuffle characters in words</button>
+        <input type="checkbox" title="WARNING: This will most likely crash this page if the string is longer than 10 characters" onclick="till_is_w.disabled = !till_w.checked; till_is_w.hidden = !till_w.checked" id="till_w"><label for="tilk=l">Until the string is [!]</label></input>
+        <textarea hidden id="till_is_w" disabled></textarea>
+        <br>
+        <button id="shuffle_word_order" onclick='i_str.value=shuffle(i_str.value.split(" ")).join(" ");updateInfo()'>Shuffle words</button>
+        <br>
+    </div>
+</div>
+<div id="encoding" class="draggablemodule">
+    <details>
+    <summary>Encoding and ciphers</summary>
+    <div id="encoding_i" class="draggablemoduleinnards">
+        <br>
+        <input type="radio" id="hex" name="encodetype" checked><label for="hex">Hexadecimal</label></input>
+        <input type="radio" id="dec" name="encodetype"><label for="hex">Decimal</label></input>
+        <input type="radio" id="bin" name="encodetype"><label for="hex">Binary</label></input>
+        <br>
+        <button id="utf8" onclick='i_str.value=toUTF8(i_str.value);updateInfo()'>Convert string to UTF-8 character codes</button>
+        <br>
+        <button id="unicode" onclick='i_str.value=Array.from(i_str.value).map(e => e.codePointAt(0).toString(document.getElementById("hex").checked ? 16 : document.getElementById("dec").checked ? 10 : 2)).join(" ");updateInfo()'>Convert string to Unicode codepoints</button>
+        <br>
+        <button id="deunicode" onclick='i_str.value=i_str.value.trim().split(" ").map(e => String.fromCodePoint(parseInt(e, document.getElementById("hex").checked ? 16 : document.getElementById("dec").checked ? 10 : 2))).join("");updateInfo()'>Convert Unicode codepoints to string</button>
+        <br>
+        <button id="atob" onclick='i_str.value=atob(i_str.value);updateInfo()'>Decode from Base64</button>
+        <br>
+        <button id="puny_d" onclick='i_str.value = punydecode(i_str.value);updateInfo()'>Decode from Punycode</button>
+        <br>
+        <button id="urlunescape" onclick='i_str.value=decodeURIComponent(i_str.value);updateInfo()'>decodeURIComponent()</button>
+        <br>
+        <button id="btoa" onclick='i_str.value=btoa(i_str.value);updateInfo()'>Encode to Base64</button>
+        <br>
+        <button id="puny_e" onclick='i_str.value = punyencode(i_str.value);updateInfo()'>Encode to Punycode</button>
+        <br>
+        <button id="urlescape" onclick='i_str.value=encodeURIComponent(i_str.value);updateInfo()'>encodeURIComponent()</button>
+        <br>
+        <input type="number" min="1" id="i_caesar" placeholder="Offset"></input>
+        <button id="cce" onclick='i_str.value = caesarEncode(i_str.value, document.getElementById("i_caesar").value);updateInfo()'>Caesar Cipher Encode</button>
+        <button id="ccd" onclick='i_str.value = caesarDecode(i_str.value, document.getElementById("i_caesar").value);updateInfo()'>Caesar Cipher Decode</button>
+        <br>
+        <button id="phonetic" onclick='i_str.value = phonetic(i_str.value);updateInfo()'>Phonetic Alphabet</button>
+        <br>
+        <input type="number" min="1" id="i_xor" placeholder="XOR Key"></input>
+        <button id="xc" onclick='i_str.value = xor(i_str.value, document.getElementById("i_xor").value);updateInfo()'>XOR Cipher</button>
+        <button id="xe" onclick='i_str.value = xorEncode(i_str.value, document.getElementById("i_xor").value);updateInfo()'>XOR Encode + Base64</button>
+        <button id="xd" onclick='i_str.value = xorDecode(i_str.value, document.getElementById("i_xor").value);updateInfo()'>XOR Decode + Base64</button>
+        <br>
+    </div>
+</div>
+<div id="hashing" class="draggablemodule">
+    <details>
+        <summary>Hashing</summary>
+        <div id="hashing_i" class="draggablemoduleinnards">
+        <br>
+            <button id="crc16" onclick='i_str.value = crc16(i_str.value);updateInfo()'>CRC-16</button>
+            <br>
+            <button id="crc32" onclick='i_str.value = CRC32.str(i_str.value);updateInfo()'>CRC-32</button>
+            <br>
+            <button id="md5" onclick='i_str.value = md5(i_str.value);updateInfo()'>MD5</button>
+            <br>
+            <button id="sha1" onclick='digest(i_str.value, "SHA-1").then(a => {i_str.value = a;updateInfo()})'>SHA-1</button>
+            <br>
+            <button id="sha256" onclick='digest(i_str.value, "SHA-256").then(a => {i_str.value = a;updateInfo()})'>SHA-256</button>
+            <br>
+            <button id="sha384" onclick='digest(i_str.value, "SHA-384").then(a => {i_str.value = a;updateInfo()})'>SHA-384</button>
+            <br>
+            <button id="sha512" onclick='digest(i_str.value, "SHA-512").then(a => {i_str.value = a;updateInfo()})'>SHA-512</button>
+            <br>
+        </div>
+    </details>
+</div>
+<div id="polybius_m" class="draggablemodule">
+    <details>
+        <summary>Polybius Square</summary>
+        <div id="polybius_i" class="draggablemoduleinnards">
+            <table id="polybius">
+                <tr>
+                    <td><input type="text" maxlength="3" value="A" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="B" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="C" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="D" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="E" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                </tr>
+                <tr>
+                    <td><input type="text" maxlength="3" value="F" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="G" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="H" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="I/J" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="K" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                </tr>
+                <tr>
+                    <td><input type="text" maxlength="3" value="L" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="M" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="N" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="O" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="P" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                </tr>
+                <tr>
+                    <td><input type="text" maxlength="3" value="Q" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="R" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="S" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="T" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="U" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                </tr>
+                <tr>
+                    <td><input type="text" maxlength="3" value="V" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="W" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="X" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="Y" size="2"></input></td>
+                    <td><input type="text" maxlength="3" value="Z" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                </tr>
+                <tr>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                    <td><input type="text" maxlength="3" size="2"></input></td>
+                </tr>
+            </table>
+            <button id="polyencode" onclick="i_str.value = polyEncode(i_str.value);updateInfo()">Polybius Square Cipher</button>
+            <button id="polydecode" onclick="i_str.value = polyDecode(i_str.value);updateInfo()">Polybius Square Decipher</button>
+        </div>
+    </details>
+</div>
+<div id="random_string" class="draggablemodule">
+    <details>
+        <summary>Random string</summary>
+        <div id="random_string_i" class="draggablemoduleinnards">
+            <input type="number" min="1" id="rminlen" placeholder="Minimum length"></input>
+            <input type="number" min="1" id="rmaxlen" placeholder="Maximum length"></input>
+            <textarea id="rchars" placeholder="Characters"></textarea>
+            <button id="rset" onclick="i_str.value = randomStr(document.getElementById('rminlen').value, document.getElementById('rmaxlen').value, document.getElementById('rchars').value);updateInfo()">Set</button>
+            <button id="rapp" onclick="i_str.value += randomStr(document.getElementById('rminlen').value, document.getElementById('rmaxlen').value, document.getElementById('rchars').value);updateInfo()">Append</button>
+            <button id="rpre" onclick="i_str.value = randomStr(document.getElementById('rminlen').value, document.getElementById('rmaxlen').value, document.getElementById('rchars').value) + i_str.value;updateInfo()">Prepend</button>
+        </div>
+    </details>
+</div>
+<div id="savingload" class="draggablemodule">
+    <details>
+    <summary>Saving and loading strings</summary>
+        <div id="savingload_i" class="draggablemoduleinnards">
+            <br>
+            <p>(Strings are saved in cookies, nothing is being sent anywhere!)</p>
+            <input type="text" id="i_saveload"></input>
+            <button id="save" onclick='localStorage.setItem("su_" + document.getElementById("i_saveload").value, i_str.value);allStorage()'>Save as</button>
+            <button id="load" onclick='localStorage.removeItem("su_" + document.getElementById("i_saveload").value, i_str.value);allStorage()'>Remove</button>
+            <br>
+            <div id="loaded"></div>
+            <br>
+        </div>
+    </details>
+</div>
+<script>allStorage()</script>
+<div class="draggablemodule" id="specialchar">
+    <details>
+        <summary>Special characters</summary>
+        <div id="ch_buttons" class="draggablemoduleinnards">
+            <!-- – -->
+            <button id="ch_tab" onclick='i_str.value += "\t";updateInfo()'>Tab</button>
+            <button id="ch_euro" onclick='i_str.value += "€";updateInfo()'>€</button>
+            <button id="ch_pound" onclick='i_str.value += "£";updateInfo()'>£</button>
+            <button id="ch_macron" onclick='i_str.value += "¯";updateInfo()'>¯</button>
+            <button id="ch_endash" onclick='i_str.value += "–";updateInfo()'>–</button>
+            <button id="ch_emdash" onclick='i_str.value += "—";updateInfo()'>—</button>
+            <button id="ch_yen" onclick='i_str.value += "¥";updateInfo()'>¥</button>
+            <button id="ch_f" onclick='i_str.value += "ƒ";updateInfo()'>ƒ</button>
+            <button id="ch_..." onclick='i_str.value += "…";updateInfo()'>…</button>
+            <button id="ch_permille" onclick='i_str.value += "‰";updateInfo()'>‰</button>
+            <button id="ch_uae" onclick='i_str.value += "Æ";updateInfo()'>Æ</button>
+            <button id="ch_lae" onclick='i_str.value += "æ";updateInfo()'>æ</button>
+            <button id="ch_uoe" onclick='i_str.value += "Œ";updateInfo()'>Œ</button>
+            <button id="ch_loe" onclick='i_str.value += "œ";updateInfo()'>œ</button>
+            <button id="ch_tm" onclick='i_str.value += "™";updateInfo()'>™</button>
+            <button id="ch_copyright" onclick='i_str.value += "©";updateInfo()'>©</button>
+            <button id="ch_registered" onclick='i_str.value += "®";updateInfo()'>®</button>
+            <button id="ch_yuan" onclick='i_str.value += "¥";updateInfo()'>¥</button>
+            <button id="ch_degree" onclick='i_str.value += "°";updateInfo()'>°</button>
+            <button id="ch_plusminus" onclick='i_str.value += "±";updateInfo()'>±</button>
+            <button id="ch_utorrent" onclick='i_str.value += "µ";updateInfo()'>µ</button>
+            <button id="ch_pilcrow" onclick='i_str.value += "¶";updateInfo()'>¶</button>
+            <button id="ch_angles" onclick='i_str.value += "«";updateInfo()'>«</button>
+            <button id="ch_anglee" onclick='i_str.value += "»";updateInfo()'>»</button>
+            <button id="ch_nbsp" onclick='i_str.value += "\u00a0";updateInfo()'>NBSP</button>
+            <button id="ch_zwsp" onclick='i_str.value += "\u200b";updateInfo()'>ZWSP</button>
+            <button id="ch_zwnj" onclick='i_str.value += "\u200c";updateInfo()'>ZWNJ</button>
+            <button id="ch_zwj" onclick='i_str.value += "\u200d";updateInfo()'>ZWJ</button>
+            <button id="ch_lrm" onclick='i_str.value += "\u200e";updateInfo()'>LRM</button>
+            <button id="ch_rlm" onclick='i_str.value += "\u200f";updateInfo()'>RLM</button>
+            <button id="ch_crewmate" onclick='i_str.value += "ඞ";updateInfo()'>ඞ</button>
+            <button id="ch_hangul" onclick='i_str.value += "ㅤ";updateInfo()'>Hangul Filler</button> 
+            <button id="ch_pi" onclick='i_str.value += "π";updateInfo()'>π</button>
+            <button id="ch_paragraph" onclick='i_str.value += "§";updateInfo()'>§</button>
+            <button id="ch_widest" onclick='i_str.value += "﷽";updateInfo()'>﷽</button>
+            <button id="ch_bullet" onclick='i_str.value += "•";updateInfo()'>•</button>
+            <button id="ch_block1" onclick='i_str.value += "▁";updateInfo()'>▁</button> 
+            <button id="ch_block2" onclick='i_str.value += "▂";updateInfo()'>▂</button> 
+            <button id="ch_block3" onclick='i_str.value += "▃";updateInfo()'>▃</button> 
+            <button id="ch_block4" onclick='i_str.value += "▄";updateInfo()'>▄</button> 
+            <button id="ch_block5" onclick='i_str.value += "▅";updateInfo()'>▅</button> 
+            <button id="ch_block6" onclick='i_str.value += "▆";updateInfo()'>▆</button> 
+            <button id="ch_block7" onclick='i_str.value += "▇";updateInfo()'>▇</button> 
+            <button id="ch_block8" onclick='i_str.value += "█";updateInfo()'>█</button> 
+            <button id="ch_block9" onclick='i_str.value += "▉";updateInfo()'>▉</button> 
+            <button id="ch_block10" onclick='i_str.value += "▊";updateInfo()'>▊</button> 
+            <button id="ch_block11" onclick='i_str.value += "▋";updateInfo()'>▋</button> 
+            <button id="ch_block12" onclick='i_str.value += "▌";updateInfo()'>▌</button> 
+            <button id="ch_block9" onclick='i_str.value += "▉";updateInfo()'>▉</button> 
+            <button id="ch_block10" onclick='i_str.value += "▊";updateInfo()'>▊</button> 
+            <button id="ch_block11" onclick='i_str.value += "▋";updateInfo()'>▋</button> 
+            <button id="ch_block12" onclick='i_str.value += "▌";updateInfo()'>▌</button> 
+        </div>
+        <script>
+            let apl = "←×÷⍟⌹○⌈⌊⊥⊤⊣⊢≠≤≥≡≢∨∧⍲⍱↑↓⊂⊃⊆⌷⍋⍒⍳⍸∊⍷∪∩⌿⍀⍪⍴⌽⊖⍉¨⍨⍣∘⍤⍥⎕⍠⌸⌺⌶⍎⍕⋄⍝⍵⍺∇⍬".split("")
+            for (i of apl) {
+                document.getElementById("ch_buttons").innerHTML += `<button id="ch_${i}" onclick='i_str.value += "${i}";updateInfo()'>${i}</button> `
+            }
+        </script>
+    </details>
+</div>
+<div id="miscellaneous" class="draggablemodule">
+    <details>
+    <summary>Miscellaneous</summary>
+        <div id="miscellaneous_i" class="draggablemoduleinnards">
+            <br>
+            <button id="fullwidth" onclick='i_str.value = fullwidth(i_str.value)'>Fullwidth</button>
+            <div id="padding">
+                <button id="padE" onclick='i_str.value = i_str.value.padEnd(n_pad.value, pad.value)'>PadEnd</button>
+                <button id="padS" onclick='i_str.value = i_str.value.padStart(n_pad.value, pad.value)'>PadStart</button>
+                <textarea id="pad" placeholder="Pad with"></textarea>
+                <input type="number" min="1" id="n_pad" placeholder="Length to reach"></input>
+            </div>
+            <br>
+            <button id="pig_latin" onclick='i_str.value=pigLatin(i_str.value);updateInfo()'>Pig Latin</button>
+            <br>
+            <button id="repeat" onclick='i_str.value = i_str.value.repeat(document.getElementById("i_repeat").value);updateInfo()'>Repeat n times</button>
+            <input type="number" min="1" id="i_repeat"></input>
+            <br>
+            <textarea id="r1" placeholder="Regex to match"></textarea>
+            <textarea id="r2" placeholder="String to replace with"></textarea>
+            <button id="replace" onclick='i_str.value = i_str.value.replace(new RegExp(document.getElementById("r1").value, `g${document.getElementById("sline").checked ? "s" : ""}${document.getElementById("multi").checked ? "m" : ""}${document.getElementById("case").checked ? "i" : ""}`), document.getElementById("r2").value);updateInfo()'>Replace (regex)</button>
+            <br>
+            <button id="repeat" onclick='i_str.value = i_str.value.slice(document.getElementById("i_smin").value, document.getElementById("i_smax").value);updateInfo()'>Slice string</button>
+            <input type="number" min="0" placeholder="min" size="3" id="i_smin"></input>
+            <input type="number" placeholder="max" min="0" size="3" id="i_smax"></input>
+            <br>
+            <button id="trim" onclick='i_str.value=i_str.value.trim();updateInfo()'>Trim</button>
+            <br>
+            <input type="checkbox" id="case"><label for="case">Case-sensitive</label></input>
+            <input type="checkbox" id="multi"><label for="multi">Run line by line</label></input>
+            <input type="checkbox" id="sline"><label for="sline">Dots match newlines</label></input>
+            <br>
+        </div>
+    </details>
+</div>
+<div id="str_info" class="draggablemodule">
+    <details>
+        <summary>String info</summary>
+        <div id="info" class="draggablemoduleinnards"></div>
+    </details>
+</div>
+<style>
+    body {
+        background-color: #222227; 
+        overflow-x: hidden;
+    }
+    h1, div, summary, label, button, input[type="text"], input[type="number"], textarea {
+        color: white;
+    }
+    * {
+        font-family: Helvetica, sans-serif;
+    }
+    button {
+        height: 30;
+        background-color: #333337;
+        border-radius: 2px;
+        border: none;
+        margin-top: 5px;
+        cursor: pointer;
+    }
+    input[type='text'], input[type='number'], textarea {
+        background-color: #111117;
+        border-style: solid;
+        border-color: #111117;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+    }
+    input[type='radio'] {
+        appearance: none;
+    }
+    input[type='radio']:after {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        position: relative;
+        top: -2px;
+        background-color: #000000;
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        border: 2px solid #2222ff;
+    }
+    input[type='radio']:checked:after {
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        position: relative;
+        top: -2px;
+        background-color: #2222ff;
+        display: inline-block;
+        visibility: visible;
+        border: 2px solid #11111f;
+    }
+    .label_all {
+        position: relative;
+        vertical-align: middle;
+        display: inline;
+        visibility: visible;
+    }
+    input[type='checkbox']:after {
+        width: 15px;
+        height: 15px;
+        top: -2px;
+        position: relative;
+        background-color: #11111f;
+        content: '';
+        display: inline-block;
+        visibility: visible;
+    }
+
+    input[type='checkbox']:checked:after {
+        width: 15px;
+        height: 15px;
+        top: -2px;
+        position: relative;
+        background-color: #2222ff;
+        display: inline-block;
+        visibility: visible;
+    }
+    /* #till_w:checked:after {
+        background-color: #ff0544;
+    }
+    #till:checked:after {
+        background-color: #ff0544;
+    } */
+    ::placeholder {
+        color: #555;
+    }
+    #r1 {
+        resize: horizontal;
+    }
+    #padding {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    input[type="number"], #i_saveload {
+        -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+                appearance: textfield;
+        height: 25px;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none;
+    }
+    div[id="basic"] {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .basic_e {
+        margin: 5px;
+    }
+    div[id="str"] * {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    /* #savingload {
+        display: flex;
+        align-items: center;
+        margin: 0 auto;
+        width: 15%;
+    }
+    #savingload * {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    } */
+    div[id="str"] label {
+        display: block;
+        margin-left: center;
+        margin-right: center;
+        text-align: center;
+    }
+    .draggablemodule {
+        background-color: #11111F;
+        width: 400px;
+        height: 50px;
+        vertical-align: middle;
+        border-radius: 6px;
+        border: none;
+        cursor: move;
+        justify-content: center;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        margin-top: 5px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    summary {
+        text-align: center;
+        vertical-align: middle;
+        padding: 13px 0px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    .draggablemoduleinnards {
+        background-color: #00000Fbf;
+        backdrop-filter: blur(4px);
+        pointer-events: inherit;
+        z-index: 1000;
+        width: 400px;
+        cursor: default;
+    }
+    .draggablemoduleinnards button {
+        margin: 10 auto;
+        margin: 3px;
+        z-index: 1001;
+    }
+    #ch_buttons * {
+        display: inline !important;
+    }
+    @keyframes alert {
+        0%   {right: -500px}
+        10%  {right: 10px}
+        90%  {right: 10px}
+        100% {right: -500px}
+    }
+    @keyframes alert_bar {
+        10%    {width: 0px}
+        90%    {width: 500px}
+    }
+    .alert {
+        display: block;
+        position:absolute;
+        right: -500px;
+        width: 500px;
+        height: 200px;
+        bottom: 10px;
+        background-color: #000000c0;
+        animation-name: alert;
+        animation-duration: 10s;
+        border-radius: 10px;
+        border: none;
+        z-index: 2000;
+    }
+    .alert_bar {
+        position: absolute;
+        width: 0px;
+        height: 10px;
+        bottom: 0px;
+        background-color: #3535ad;
+        animation-name: alert_bar;
+        animation-timing-function: linear;
+        animation-duration: 10s;
+        border-radius: 10px;
+        border: none;
+        z-index: 2001;
+        opacity: 100%;
+    }
+    .alert_title {
+        color: white;
+        display: block;
+        margin: 10px;
+        z-index: 2001;
+    }
+    .alert_desc {
+        color: white;
+        display: block;
+        margin: 10px;
+        z-index: 2002;
+    }
+</style>
+<script>
+    for (let e of document.getElementsByClassName("draggablemodule"))
+        e.title = "You can move this element by dragging it with right click!"
+    function dragElement(elmnt) {
+        elmnt.onmousedown = function(e) {
+            if (e.button >= 2) {
+                elmnt.style.position = 'absolute';
+                moveAt(e);
+                document.body.appendChild(elmnt);
+
+                elmnt.style.zIndex = 1000;
+
+                function moveAt(e) {
+                    elmnt.style.left = e.pageX - elmnt.offsetWidth / 2 + 'px';
+                    elmnt.style.top = e.pageY - elmnt.offsetHeight / 2 + 'px';
+                }
+
+                document.onmousemove = function(e) {
+                    moveAt(e);
+                }
+
+                elmnt.onmouseup = function() {
+                    document.onmousemove = null;
+                    elmnt.onmouseup = null;
+                }
+            }
+        }
+        elmnt.addEventListener('contextmenu', event => event.preventDefault());
+    }
+    dragElement(document.getElementById("savingload"))
+    dragElement(document.getElementById("specialchar"))
+    dragElement(document.getElementById("casing"))
+    dragElement(document.getElementById("characterorder"))
+    dragElement(document.getElementById("encoding"))
+    dragElement(document.getElementById("polybius_m"))
+    dragElement(document.getElementById("random_string"))
+    dragElement(document.getElementById("hashing"))
+    dragElement(document.getElementById("miscellaneous"))
+    dragElement(document.getElementById("str_info"))
+</script>
