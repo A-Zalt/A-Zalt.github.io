@@ -16,7 +16,7 @@
             i_str.value = value + i_str.value
         }
     }
-    let alertHeight = 10
+    let nextAlertPlace = 0
     const smallCapsMap = {a: "ᴀ",
         b: "ʙ",
         c: "ᴄ",
@@ -219,15 +219,29 @@
     }
     old_alert = alert
     function alert(title, desc) {
-        alertHeight = Math.max(alertHeight, 10)
         let div = document.createElement("div")
         div.className = "alert"
         let bar = document.createElement("div")
         bar.className = "alert_bar"
+        let lastHeight = 10
+        let n = 1
+        let alerts = document.getElementsByClassName("alert")
+        let bottoms = Array.from(alerts).map(e => parseInt(e.style.bottom)).sort((a, b) => a - b)
+        console.log(bottoms)
+        if (bottoms.length == 0 || bottoms[0] != 10) {
+            lastHeight = 10
+        } else {
+            for (let i = 0; i < bottoms.length; i++) {
+                if (bottoms[i+1] - bottoms[i] > 210) {
+                    lastHeight = bottoms[i] + 210
+                    break
+                }
+                lastHeight = bottoms[i] + 210
+            }
+        }
         div.addEventListener("click", (e) => {
             if (e.button == 0) {
                 div.remove()
-                alertHeight -= 210
             }
         })
         let titleDiv = document.createElement("h3")
@@ -236,15 +250,13 @@
         let descDiv = document.createElement("p")
         descDiv.innerText = desc
         descDiv.className = "alert_desc"
-        div.style.bottom = alertHeight
+        div.style.bottom = lastHeight
         div.appendChild(bar)
         div.appendChild(titleDiv)
         div.appendChild(descDiv)
         document.body.appendChild(div)
-        alertHeight += 210
         setTimeout(() => {
             div.remove()
-            alertHeight -= 210
         }, 10000)
     }
     function allStorage() {
@@ -881,7 +893,7 @@
     button {
         height: 30;
         background-color: #333337;
-        border-radius: 2px;
+        border-radius: 5px;
         border: none;
         margin-top: 5px;
         cursor: pointer;
