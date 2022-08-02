@@ -16,7 +16,6 @@
             i_str.value = value + i_str.value
         }
     }
-    let nextAlertPlace = 0
     const smallCapsMap = {a: "ᴀ",
         b: "ʙ",
         c: "ᴄ",
@@ -474,7 +473,16 @@
     function caesarDecode(str, key) {
         return caesarEncode(str, -key)
     }
-
+    function snakeCase(str) {
+        return str.toLowerCase().replace(/\s|-/g, "_")
+    }
+    function kebabCase(str) {
+        return str.toLowerCase().replace(/\s|_/g, "-")
+    }
+    function camelCase(str) {
+        let s = capitalize(str.toLowerCase()).replace(/\s|_|-/g, "")
+        return s[0].toLowerCase() + s.substr(1)
+    }
     function xor(str, key) { return String.fromCodePoint(...str.split('').map((char, i) => char.charCodeAt(0) ^ key.toString().charCodeAt(i % key.toString().length))) }
     function xorEncode(str, key) { return btoa(xor(str, key)).replace(/\//g, '_').replace(/\+/g, '-'); }
     function xorDecode(str, key) { return xor(atob(str.replace(/\//g, '_').replace(/\+/g, '-')).toString(), key) }
@@ -559,13 +567,17 @@
     <summary>Casing</summary>
         <div id="casing_i" class="draggablemoduleinnards">
             <br>
-            <button id="capitalize_word" onclick='i_str.value=capitalize(i_str.value);updateInfo()'>Capitalize all words</button>
+            <button id="camel" onclick='i_str.value=camelCase(i_str.value);updateInfo()'>camelCase</button>
+            <br>
+            <button id="capitalize_word" onclick='i_str.value=capitalize(i_str.value);updateInfo()'>Capitalize All Words</button>
+            <br>
+            <button id="kebab" onclick='i_str.value=kebabCase(i_str.value);updateInfo()'>kebab-case</button>
             <br>
             <button id="mixed1" onclick='i_str.value=mixedCase1(i_str.value);updateInfo()'>MiXeD cAsE</button>
             <br>
             <button id="mixed2" onclick='i_str.value=mixedCase2(i_str.value);updateInfo()'>mIxEd CaSe</button>
             <br>
-            <button id="lower" onclick='i_str.value=i_str.value.toLowerCase();updateInfo()'>Lower case</button>
+            <button id="lower" onclick='i_str.value=i_str.value.toLowerCase();updateInfo()'>lower case</button>
             <br>
             <button id="random" onclick='i_str.value=randomCase(i_str.value);updateInfo()'>Random case</button>
             <br>
@@ -573,7 +585,9 @@
             <br>
             <button id="small" onclick='i_str.value=smallCaps(i_str.value);updateInfo()'>Small caps</button>
             <br>
-            <button id="upper" onclick='i_str.value=i_str.value.toUpperCase();updateInfo()'>Upper case</button>
+            <button id="snake" onclick='i_str.value=snakeCase(i_str.value);updateInfo()'>snake_case</button>
+            <br>
+            <button id="upper" onclick='i_str.value=i_str.value.toUpperCase();updateInfo()'>UPPER CASE</button>
             <br>
         </div>
     </details>
@@ -1049,6 +1063,13 @@
         width: 400px;
         cursor: default;
     }
+    .draggablemoduleinnards * {
+        -moz-user-select: text;
+        -khtml-user-select: text;
+        -webkit-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }
     .draggablemoduleinnards button {
         margin: 10 auto;
         margin: 3px;
@@ -1106,6 +1127,13 @@
         display: block;
         margin: 10px;
         z-index: 2002;
+    }
+    button:hover {
+        background-color: #001ead;
+    }
+
+    button:active {
+        transform: scale(1.2);
     }
 </style>
 <script>
