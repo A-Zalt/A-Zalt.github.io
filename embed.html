@@ -8,5 +8,13 @@
         title.setAttribute("property", "og:title")
         title.setAttribute("content", urlParams.get("title"))
         document.head.append(title)
+        let desc = document.createElement("meta")
+        desc.setAttribute("property", "og:description")
+        desc.setAttribute("content", urlParams.get("description"))
+        document.head.append(desc)
+        let footer = document.createElement("meta")
+        footer.setAttribute("property", "og:site_name")
+        footer.setAttribute("content", urlParams.get("footer"))
+        document.head.append(footer)
     </script>
 </html>
