@@ -17,8 +17,12 @@
         _footer.setAttribute("content", urlParams.get("footer"))
         document.head.append(_footer)
         let image = document.createElement("meta")
-        footer.setAttribute("property", "og:image")
-        footer.setAttribute("content", urlParams.get("image"))
+        image.setAttribute("property", "og:image")
+        image.setAttribute("content", urlParams.get("image"))
         document.head.append(image)
+        let url = document.createElement("meta")
+        url.setAttribute("property", "og:url")
+        url.setAttribute("content", urlParams.get("url"))
+        document.head.append(url)
     </script>
 </html>
