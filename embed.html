@@ -16,5 +16,9 @@
         footer.setAttribute("property", "og:site_name")
         footer.setAttribute("content", urlParams.get("footer"))
         document.head.append(footer)
+        let image = document.createElement("meta")
+        footer.setAttribute("property", "og:image")
+        footer.setAttribute("content", urlParams.get("image"))
+        document.head.append(image)
     </script>
 </html>
