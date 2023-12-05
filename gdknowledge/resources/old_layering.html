@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Old layering - Library of Geometria</title>
+  </head>
+  <body>
+    <div id="topbar">
+            <a href="./index.html">Home</a>
+            <a href="./gallery.html">Gallery</a>
+            <a href="./mirrors.html">Mirrors</a>
+            <a href="./resources.html">Resources</a>
+            <a href="./versions.html">Versions</a>
+      </div><br>
+    <h1>Layering in old versions (pre-1.9?)</h1>
+    <p>In old versions of GD, the following layers existed (from top to bottom):</p>
+
+<strong>Portal</strong> - the right part of portals is on the highest layer and renders above all objects<br>
+<strong>Ground spike</strong> - the ground spikes render above everything (except for the right part of portals)<br>
+<strong>Default</strong> - this is the layer for most objects, such as blocks, pads, orbs and the left part of portals<br>
+<strong>Blending</strong> - this is the layer for ground spike deco and chains<br>
+
+<p>In each of the layers, the objects that are rendered last take priority (and usually that matches up with their order in the level string)</p>
+  </body>
+</html>
