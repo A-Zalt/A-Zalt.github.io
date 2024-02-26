@@ -465,8 +465,8 @@
   </table>
     <p>The slopes with ID 349 and 351 got relisted in 2.2 (starting with the SubZero 2022 leak), probably because of Nine Circles levels. They are 2 of the 3 objects that have ever been unlisted and then relisted again. The other object is covered later in this document.</p>
     <p>Here are the unlisted slopes: 321, 323, 331, 333, 337, 339, 343, 345, <s>349</s>, <s>351</s>, 353, 355, 483, 484, 492, 493, 651, 652, 709, 710, 711, 712, 726, 727, 728, 729, 886, 887</p>
-    <h3>1.6 blocks with outlines</h3>
-    <p>In 2.0, object IDs 160-169 and 193 were unlisted and their versions without outlines were listed instead (starts at 1140). However, object IDs 164 and 193 did not even have an outline, but were replaced anyway with what is an identical object, just with a different object ID. So when making a level backporter, one should replace ID 1142 and 1148 with 164 and 193 respectively.</p>
+    <h3>Blocks with outlines</h3>
+    <p>In 2.0, object IDs 160-169, 193 and in 2.1, objects IDs 247-254 were unlisted and their versions without outlines were listed instead (for 160-169 + 193, they start at 1140, meanwhile for 247-254, they start at 1820 (but 1822 doesn't exist)). However, object IDs 164, 193 and 251 did not even have an outline, but were replaced anyway with what is an identical object, just with a different object ID. So when making a level backporter, one should replace ID 1142, 1148 and 1825 with 164, 193 and 251 respectively.</p>
     <h3>Old color triggers</h3>
     <p>All the way from 1.0 up to 2.0, there were new color triggers added that in 2.1 were merged into the color trigger (which was added in 2.0). And in 2.2, their sprites got removed and changed to the Color trigger sprite. Final table of the document, I promise:</p>
     <table border="1">
@@ -568,5 +568,8 @@
     <h3>ID 131 & 134</h3>
     <p>These 2 objects are the small cloud and the diamond rod. Hidden in 1.50-1.51, but listed in the editor since 1.6. I'm not sure why they weren't just listed outright, since they had the exact same textures in 1.5 and everything.</p>
     <img src="./assets/id131_134.png">
+    <h3>ID 142</h3>
+    <p>Now, this one is the secret coin used in official levels. In 1.6, despite being hidden, you could place this object in any level by editing the level data, and by setting its property of 11 to a unique number for each coin, you could essentially make a free secret coin level and it would actually add them to your stats. And as you probably know, this had been done back then and widely used before being patched. So ever since 1.7, the object is hardcoded to be removed when playing any non-official level. And ever since 2.0, the object doesn't even show up in the editor.</p>
+    <h3></h3>
   </body>
 </html>
