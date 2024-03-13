@@ -1,0 +1,94 @@
+<html><head>
+    <title>Silly rngblock level simulator</title>
+<script>
+      const INT_LIMIT = 2**32 - 1;
+      class PRNG {
+          constructor(seed) {
+              this.seed = seed || 0;
+          }
+          srand(seed) {
+              this.seed = seed;
+          }
+          rand() {
+              let n = this.forward();
+              return (n>>16) & 0x7fff;
+          }
+          forward() {
+              let n = this.seed * 0x343fd + 0x269ec3;
+              this.seed = n & 0xffffffff;
+              return n;
+          }
+      }
+      function random(rng, chance) {
+        if (rng.rand() / 32767 * 100 < chance) {
+            return 1
+        }
+        return 2
+      }
+      function srbl_roll_13(rng) {
+        let roll = {
+            rarity: 0,
+            antique: false
+        }
+        if (random(rng, 1) == 1)
+            roll.antique = true
+        for (let i = 0; i < 27; i++) {
+            if (random(rng, 50) == 1) break
+            roll.rarity++
+        }
+        return roll
+      }
+      let rollStrings = [
+          "Passive", "Common", "Basic", "Uncommon", "Rare", "Great", "Epic", "Insane", "Fantastic", "Legendary", "Exotic", "Shiny", "Sparkling",
+          "Cataclysmic", "Universal", "Silent", "Tarsorado", "Impossible", "Darkness", "Epiphany", "Ascendance", "Godlike", "Astronomical",
+          "Unbelievable", "Prodigious", "Monumental", "Inconceivable", "Cursed Passive"
+      ]
+      
+      function runTheGauntlet() {
+        let info = document.getElementById("info")
+        info.innerHTML = ""
+        let rolls = document.getElementById("rolls").value
+        let seed = document.getElementById("seed").value
+        if (seed == -1) {
+          seed = Math.floor(Math.random()*INT_LIMIT)
+          document.getElementById("seed").value = seed
+        }
+        let rarities = new Array(rollStrings.length * 2).fill(0)
+        let rng = new PRNG(Number(seed))
+        console.log(Number(rolls))
+        for (let i = 0; i < Number(rolls); i++) {
+          let roll = srbl_roll_13(rng)
+          let index
+          if (roll.antique) {
+              index = roll.rarity + rollStrings.length
+          } else {
+              index = roll.rarity
+          }
+          if (rarities[index] < 1) { 
+              info.innerHTML += `${roll.antique ? "Antique " : ""}${rollStrings[roll.rarity]} in ${i+1} rolls<br>`
+          }
+          rarities[index]++
+        }
+        info.innerHTML += "<br>"
+        for (let i = 0; i < rarities.length; i++) {
+            if (i >= rollStrings.length) {
+                info.innerHTML += `Antique ${rollStrings[i - rollStrings.length]}: ${rarities[i]}<br>`
+            } else {
+                info.innerHTML += `${rollStrings[i]}: ${rarities[i]}<br>`
+            }
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Silly RNGBlock Level Simulator</h1>
+    <p>Welcome to the SRBL simulator. The RNG on this website is 100% identical to Geometry Dash.</p>
+    <input type="number" id="seed" min="-1" max="4294967295" placeholder="Seed (-1 for random seed)">
+    <input type="number" id="rolls" min="1" placeholder="Amount of rolls">
+    <button onclick="runTheGauntlet()">Roll!</button>
+    <p id="info"></p>
+  
+
+
+
+</body></html>
