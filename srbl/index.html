@@ -50,8 +50,8 @@
         let rolls = document.getElementById("rolls").value
         let seed = document.getElementById("seed").value
         if (seed == -1) {
-          seed = Math.floor(Math.random()*INT_LIMIT)
-          document.getElementById("seed").value = seed
+            seed = Math.floor(Math.random()*INT_LIMIT)
+            info.innerHTML += `Random Seed: ${seed}<br>`
         }
         let rarities = new Array(rollStrings.length * 2).fill(0)
         let rng = new PRNG(Number(seed))
