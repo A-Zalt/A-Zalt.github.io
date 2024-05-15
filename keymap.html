@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <title>Keyboard mapping thingy</title>
+  </head>
+  <body>
+    <h1>Keyboard mapping thingy</h1>
+    <textarea id="latin" rows="4" cols="50" placeholder="QWERTY English text goes here..."></textarea>    
+    <textarea id="russian" rows="4" cols="50" placeholder="ЙЦУКЕН Russian text goes here..."></textarea>
+    <textarea id="ukrainian" rows="4" cols="50" placeholder="ЙЦУКЕН Ukrainian text goes here..."></textarea>
+    <script>
+      let keyboardUA = ("йцукенгшщзхї" +
+                        "фівапролджє" +
+                        "ячсмитьбю").split("")
+      let keyboardRU = ("йцукенгшщзхъ" +
+                        "фывапролджэ" +
+                        "ячсмитьбю").split("")
+      let keyboardEN = ("qwertyuiop[]" +
+                        "asdfghjkl;'" +
+                        "zxcvbnm,.").split("")
+      let upToDownMap = {
+        "<": ",", ">": ".", "{": "[", "}": "]", ":": ";", '"': "'"
+      }
+      function isStringUpperCase(string) {
+        return string.toUpperCase() == string && string.toLowerCase() != string
+      }
+      let enToRuMap = {}
+      let enToUaMap = {}
+
+      let ruToEnMap = {}
+      let uaToEnMap = {}
+      let ind = 0
+      for (let i of keyboardEN) {
+        enToUaMap[i] = keyboardUA[ind]
+        enToRuMap[i] = keyboardRU[ind]
+        ruToEnMap[keyboardRU[ind]] = i
+        uaToEnMap[keyboardUA[ind]] = i
+        ind++
+      }
+      let latin = document.getElementById('latin')
+      let moskal = document.getElementById('russian')
+      let ukraini = document.getElementById('ukrainian')
+      latin.onchange = function() {
+          if (latin.value) {
+            moskal.value = latin.value.split("").map(c => {
+              if (isStringUpperCase(c)) return enToRuMap[c.toLowerCase()].toUpperCase()
+              return enToRuMap[c] || c
+            }).join("")
+            ukraini.value = latin.value.split("").map(c => {
+              if (isStringUpperCase(c)) return enToUaMap[c.toLowerCase()].toUpperCase()
+              return enToUaMap[c] || c
+            }).join("")
+          }
+      }
+      moskal.onchange = function() {
+          if (moskal.value) {
+            latin.value = moskal.value.split("").map(c => {
+              if (isStringUpperCase(c)) return ruToEnMap[c.toLowerCase()].toUpperCase()
+              return ruToEnMap[c] || c
+            }).join("")
+            ukraini.value = moskal.value.split("").map(c => {
+              if (isStringUpperCase(c)) return enToUaMap[ruToEnMap[c.toLowerCase()]].toUpperCase()
+              return ruToEnMap[c] ? enToUaMap[ruToEnMap[c]] : c
+            }).join("")
+          }
+      }
+      ukraini.onchange = function() {
+          if (ukraini.value) {
+            latin.value = ukraini.value.split("").map(c => {
+              if (isStringUpperCase(c)) return uaToEnMap[c.toLowerCase()].toUpperCase()
+              return uaToEnMap[c] || c
+            }).join("")
+            moskal.value = ukraini.value.split("").map(c => {
+              if (isStringUpperCase(c)) return enToRuMap[uaToEnMap[c.toLowerCase()]].toUpperCase()
+              return uaToEnMap[c] ? enToRuMap[uaToEnMap[c]] : c
+            }).join("")
+          }
+      }
+    </script>
+  </body>
+</html>
