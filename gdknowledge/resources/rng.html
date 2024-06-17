@@ -22,7 +22,8 @@
     <h2>AdvRand trigger</h2>
     <p>This one, on the other hand, is more complicated.</p>
     <p>Here's an implementation in JavaScript (weights is an array of all chances for each group):</p>
-    <pre><code>function advancedRandom(weights) {
+    <pre><code>
+      function advancedRandom(weights) {
         let value = rand() / 32767 * weights.reduce((a, b) => a + b)
         let num = 0
         for (let i = 0; i < weights.length; i++) {
@@ -40,8 +41,5 @@
     <p>It calls rand() 3 times, and 1 extra time if Speed +- is not 0</p>
 
 <p>In each of the layers, the objects that are rendered last take priority (and usually that matches up with their order in the level string)</p>
-    <img src="./assets/layering1.png" alt="Object layering in the editor"><br>
-    <img src="./assets/layering2.png" alt="Object layering in the level"><br>
-    <img src="./assets/layering3.png" alt="More object layering in the level"><br>
   </body>
 </html>
