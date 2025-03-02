@@ -1,0 +1,92 @@
+<a href="../index.html">Home</a>
+<a href="../gallery.html">Gallery</a>
+<a href="../mirrors.html">Mirrors</a>
+<a href="../resources.html">Resources</a>
+<a href="../versions.html">Versions</a>
+<h1>1.90</h1>
+<h2>Changes from 1.811:</h2>
+<h3>Main Levels:</h3>
+- Added new main level & song Blast Processing<br>
+- Added new demon main level & song Theory of Everything 2, which has a requirement of 30 secret coins<br>
+- Stereo Madness was updated to nerf the last coin, notably removing the straight fly<br>
+- xStep was updated to add black blocks in the transition from first ball to first ship<br>
+- Theory of Everything was updated to fix a secret way near the end<br>
+- Adjusted main level difficulty faces. Updating from previous versions now properly changes them as well<br>
+
+<h3>Universal:</h3>
+- The game now uses fmod as its audio engine instead of SimpleAudioEngine. This fixes a multitude of audio issues, such as music restarting from the beginning when playing from start position or pausing & unpausing. However, this also reduced the audio quality<br>
+- Added UHD quality textures<br>
+- Added a user account system with the ability to store your save file in the cloud. Unregistered accounts are now green<br>
+
+<h3>Objects:</h3>
+- Added the wave portal<br>
+- Added 3D Line objects, as well as the 3DL color channel and its respective color trigger<br>
+- Added the cross tileset<br>
+- Added bare outline slope and slab variants<br>
+- Added grayscale tiles of various brightness, as well as their respective slopes, slabs and small versions. Also added a small checkered tile<br>
+- Added grey patterned tile pipe pieces<br>
+- Added invisible slope variants<br>
+- Added cog-type saws and colored saws<br>
+- Added color triggers for color channels 2-4, and C-Obj became the Col1 trigger<br>
+- Added non-solid versions of most existing slopes<br>
+- Added the square ground spike, its corner and its outline<br>
+- Added invisible versions of outline saws<br>
+
+<h3>Achievements & Icons:</h3>
+- Icons are no longer centered in the icon kit. Cubes and colors are now paginated<br>
+- Added achievements for beating Blast Processing & Theory of Everything 2 in normal & practice mode<br>
+- Added an achievement for beating 40 demons<br>
+- Added achievements for getting 1500 & 2000 stars<br>
+- Added achievements for getting 95 & 100 secret coins<br>
+- Added achievement for beating 30 map packs<br>
+- Added achievement for beating 1000 user levels<br>
+- Added achievements for liking/disliking 100 & 1000 levels<br>
+- Added achievements for rating 100 & 1000 levels<br>
+- Changed the So close achievement to require dying at 95% on a main level instead of 99%, which was almost impossible to do<br>
+- Added the secret coin for scrolling the main levels 3 times<br>
+- Achievement sounds no longer pitch up when you get multiple of them in a row<br>
+
+<h3>Gameplay:</h3>
+- The colored singular brick objects no longer have a hitbox (seriously RobTop?)<br>
+- The pulsing rod ball's position is now consistent and will not change regardless of if the rod is rotated/flipped or not<br>
+- The render cap of 16,384 objects now only counts on-screen objects<br>
+
+<h3>Menus:</h3>
+- Added the infobox to the Coming Soon screen on the main level, which references the easter egg secret coin<br>
+- Added new length type Extra-Long<br>
+- Added No Star filter<br>
+- Song search filter is no longer grayed out when not enabled and is instead completely invisible<br>
+- Added YouTube button to the title screen<br>
+- The gold Pusab font is now less orange, has a shadow and is now RGBA4444 instead of RGBA8888. It also now has some padding, which makes buttons appear larger<br>
+- You can now see the song of the level below the username of the author in the level browsing menu<br>
+- You can now see the song of the level in the LevelInfoLayer. This caused the 2 progress bars to be shrunk to fit the song display, and length/download count/like count have been moved to the right of the play button<br>
+- Added a global infobox to the online level menu, which explains the green/gold usernames and blue/pink songs<br>
+- Added Flip Pause Button option<br>
+- Added 2 song-related settings: No Song Limit and Load songs to memory<br>
+- Added info button to settings<br>
+- Settings now have Saved Songs<br>
+- When destroying icons on the main menu, the death sound is no longer randomly pitched<br>
+- Re-added "Spikes are not your friends, don't forget to jump" as a loading message<br>
+
+<h3>Editor:</h3>
+- Added 3 new color channels and the ability to recolor a lot of objects with the Edit Object button. Obj-2 became Col1<br>
+- Added the ability to use custom songs from Newgrounds<br>
+- Changed object limit from 12000 to 15000<br>
+- Added 2 new backgrounds and grounds<br>
+- Tiny blocks now use a smaller grid instead of being placed in the middle<br>
+- Added separate Copy and Paste buttons, as well as the "Toggle Copy" button on the editor pause menu which hides them<br>
+- Levels that aren't given a name now receive the name "Unnamed {number}", starting from 0<br>
+- GLM_02 support has been removed. This means that the game will not load levels saved in 1.0 anymore<br>
+- Local levels now have their own info button, displaying the Total Attempts, Total Jumps and Objects<br>
+- Added Uncheck Portals button to editor pause menu<br>
+- Changed default undo/redo limit to 200, and increased limit to 1000<br>
+- Obj-2/Col1 bush decorations have been unlisted, as you can now just recolor the player color bushes<br>
+
+<h3>Not-in-game content</h3>
+- Manifest version changed from 21 to 22<br>
+- Game version changed from 18 to 19<br>
+- Save file binaryVersion changed from 21 to 22<br>
+- Your save files are now encrypted with AES-256 on iOS, and zipped + Base64 encoded + XOR-encrypted with the key 0x11 on Android<br>
+- Added unlisted small circle object (ID 725)<br>
+- The following endpoints now have 19 added to the end of their name: deleteGJComment, getGJComments, getGJScores, getGJCreators, deleteGJLevelUser, downloadGJLevel, getGJLevels, uploadGJComment, updateGJUserScore, uploadGJLevel<br>
+- Level start object now uses kS29-kS37 keys with a different color channel format for all the colors instead of kS1-kS28<br>
