@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <title>Manual Generator</title>
+    </head>
+    <body>
+        <label for="gmd">Choose a .gmd file:</label><br>
+        <input type="file" onchange="fileChanged(this)" onclick="this.value=null;" id="gmd" name="gmd" accept=".gmd" />
+        <br>
+        <button id="download" onclick="download(filename, JSON.stringify(manual, null, 4))" disabled=true>Download Manual</button>
+        <script>
+            let filename = ""
+            let manual = {}
+            function fileChanged(file) {
+                let gmd = file.files[0]
+                const keys = {
+                    k1: "id",
+                    k2: "level_name",
+                    k3: "description",
+                    k4: "level_string",
+                    k5: "username",
+                    k6: "user_id",
+                    k8: "official_song",
+                    k9: "rating",
+                    k10: "rating_sum",
+                    k11: "downloads",
+                    k16: "level_version",
+                    k17: "game_version",
+                    k22: "likes",
+                    k23: "length",
+                    k24: "dislikes",
+                    k25: "demon",
+                    k26: "stars",
+                    k27: "feature_score",
+                    k33: "auto",
+                    k41: "password",
+                    k42: "original",
+                    k43: "two_player",
+                    k45: "song",
+                    k48: "objects_count",
+                    k60: "account_id",
+                    k64: "coins",
+                    k65: "coins_verified",
+                    k66: "requested_stars",
+                    k67: "extra_string",
+                    k74: "daily_id",
+                    k75: "epic",
+                    k76: "demon_type",
+                    k80: "seconds_spent_editing",
+                    k81: "seconds_spent_editing_copies"
+                }
+                if (gmd) {
+                    filename = gmd.name + ".json"
+                    let date = new Date(gmd.lastModified)
+                    let tz = -date.getTimezoneOffset()
+                    manual = {
+                        "comment": `Automatically generated from .gmd file via AntiMatter's Manual Generator`,
+                        "date": `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${
+                        date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${
+                        date.getSeconds().toString().padStart(2, "0")}${tz >= 0 ? "+" : "-"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`,
+                        "levels": []
+                    }
+                    console.log(manual)
+                    let reader = new FileReader()
+                    reader.readAsText(gmd, "UTF-8")
+                    reader.onload = function (evt) {
+                        let level = {description_encoded: true}
+                        let parser = new DOMParser();
+                        let xmlDoc = parser.parseFromString(evt.target.result, "text/xml");
+                        let dick = xmlDoc.getElementsByTagName("dict")[0]
+                        let childNodes = dick.childNodes
+                        for (let i = 0; i < childNodes.length; i += 2) {
+                            let key = childNodes[i].innerHTML 
+                            let value = childNodes[i+1].innerHTML 
+                            let type = childNodes[i+1].tagName
+                            if (type == "i" || type == "int" || type == "integer") {
+                                if (!value) value = 0
+                                else value = parseInt(value)
+                            } else if (type == "r" || type == "real") {
+                                if (!value) value = 0
+                                else value = parseFloat(value)
+                            } else if (type == "t" || type == "true") {
+                                value = true
+                            } else if (type == "f" || type == "false") {
+                                value = false
+                            }
+                            if (keys[key]) {
+                                level[keys[key]] = value
+                            }
+                        }
+                        if (!level.id) {
+                            return alert("The level ID is not present in the .gmd file!")
+                        }
+                        if (level.description) {
+                            try {
+                                atob(level.description)
+                            } catch {
+                                level.description_encoded = false
+                            }
+                        } else delete level.description_encoded
+                        manual.levels.push(level)
+                        document.getElementById("download").disabled = false
+                    }
+                    reader.onerror = function (evt) {
+                        alert("Could not read file!")
+                    }
+                }
+            }
+            function download(filename, text) {
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            }
+        </script>
+    </body>
+</html>
