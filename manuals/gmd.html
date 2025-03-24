@@ -67,6 +67,7 @@
                         let parser = new DOMParser();
                         let xmlDoc = parser.parseFromString(evt.target.result, "text/xml");
                         let dick = xmlDoc.getElementsByTagName("dict")[0]
+                        if (!dick) dick = xmlDoc.getElementsByTagName("d")[0] // hi RandomB
                         let childNodes = dick.childNodes
                         for (let i = 0; i < childNodes.length; i += 2) {
                             let key = childNodes[i].innerHTML 
