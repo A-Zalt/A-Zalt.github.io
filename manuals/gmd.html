@@ -54,55 +54,65 @@
                     let tz = -date.getTimezoneOffset()
                     manual = {
                         "comment": `Automatically generated from .gmd file via AntiMatter's Manual Generator`,
-                        "date": `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${
+                        "created": `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${
                         date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${
                         date.getSeconds().toString().padStart(2, "0")}${tz >= 0 ? "+" : "-"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`,
                         "levels": []
                     }
-                    console.log(manual)
                     let reader = new FileReader()
                     reader.readAsText(gmd, "UTF-8")
                     reader.onload = function (evt) {
-                        let level = {description_encoded: true}
-                        let parser = new DOMParser();
-                        let xmlDoc = parser.parseFromString(evt.target.result, "text/xml");
-                        let dick = xmlDoc.getElementsByTagName("dict")[0]
-                        if (!dick) dick = xmlDoc.getElementsByTagName("d")[0] // hi RandomB
-                        let childNodes = dick.childNodes
-                        for (let i = 0; i < childNodes.length; i += 2) {
-                            let key = childNodes[i].innerHTML 
-                            let value = childNodes[i+1].innerHTML 
-                            let type = childNodes[i+1].tagName
-                            if (type == "i" || type == "int" || type == "integer") {
-                                if (!value) value = 0
-                                else value = parseInt(value)
-                            } else if (type == "r" || type == "real") {
-                                if (!value) value = 0
-                                else value = parseFloat(value)
-                            } else if (type == "t" || type == "true") {
-                                value = true
-                            } else if (type == "f" || type == "false") {
-                                value = false
+                        try {
+                            let level = {description_encoded: true}
+                            let parser = new DOMParser();
+                            let xmlDoc = parser.parseFromString(evt.target.result, "text/xml");
+                            let dick = xmlDoc.getElementsByTagName("dict")[0]
+                            if (!dick) dick = xmlDoc.getElementsByTagName("d")[0] // hi RandomB
+                            let childNodes = dick.childNodes
+                            let children = []
+                            for (let i of childNodes) {
+                                if (i.nodeType != 3) children.push(i) // remove white space
                             }
-                            if (keys[key]) {
-                                level[keys[key]] = value
+                            for (let i = 0; i < children.length; i += 2) {
+                                let key = children[i].innerHTML
+                                let value = children[i+1].innerHTML 
+                                let type = children[i+1].tagName
+                                if (type == "i" || type == "int" || type == "integer") {
+                                    if (!value) value = 0
+                                    else value = parseInt(value)
+                                } else if (type == "r" || type == "real") {
+                                    if (!value) value = 0
+                                    else value = parseFloat(value)
+                                } else if (type == "t" || type == "true") {
+                                    value = true
+                                } else if (type == "f" || type == "false") {
+                                    value = false
+                                }
+                                if (keys[key]) {
+                                    level[keys[key]] = value
+                                }
                             }
+                            if (!level.id) {
+                                document.getElementById("download").disabled = true
+                                return alert("The level ID is not present in the .gmd file!")
+                            }
+                            if (level.description) {
+                                try {
+                                    atob(level.description)
+                                } catch {
+                                    level.description_encoded = false
+                                }
+                            } else delete level.description_encoded
+                            manual.levels.push(level)
+                            document.getElementById("download").disabled = false
+                        } catch (e) {
+                            console.log(e)
+                            document.getElementById("download").disabled = true
                         }
-                        if (!level.id) {
-                            return alert("The level ID is not present in the .gmd file!")
-                        }
-                        if (level.description) {
-                            try {
-                                atob(level.description)
-                            } catch {
-                                level.description_encoded = false
-                            }
-                        } else delete level.description_encoded
-                        manual.levels.push(level)
-                        document.getElementById("download").disabled = false
                     }
                     reader.onerror = function (evt) {
                         alert("Could not read file!")
+                        document.getElementById("download").disabled = true
                     }
                 }
             }
