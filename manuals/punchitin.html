@@ -4,9 +4,10 @@
     </head>
     <body>
         <label for="comment">Manual Comment</label>
-        <input type="text" id="comment" placeholder="Manual Comment"/><br>
-        <label for="comment">Manual Date (local timezone)</label>
-        <input type="date" id="date"/><input type="time" id="time"/><input type="number" min="0" max="59" id="seconds" placeholder="Seconds" size="5"><br><br>
+        <input type="text" id="comment" size="50" placeholder="Manual Comment"/><br>
+        <label for="date">Manual Date (local timezone)</label>
+        <input type="date" id="date"/><input type="time" id="time"/><input type="number" min="0" max="59" id="seconds" placeholder="Seconds" size="5">
+        <button id="currentDate" onclick="setCurrentDate()">Set to current date</button><br><br>
         <label for="id">Level ID</label>
         <input type="number" id="id" placeholder="Level ID"><br>
         <label for="level_name">Level Name</label>
@@ -78,7 +79,7 @@
         <input type="number" id="custom_song" placeholder="Custom Song ID"><br>
         <label for="difficulty">Difficulty</label>
         <select name="difficulty" id="difficulty">
-            <option value="0">N/A</option>
+            <option value="null">N/A</option>
             <option value="-1">Auto</option>
             <option value="1">Easy</option>
             <option value="2">Normal</option>
@@ -125,68 +126,135 @@
         <label for="level_version">Level Version</label>
         <input type="number" id="level_version" placeholder="Level Version" min=-128 max=127><br>
         <br>
-        <button id="download" onclick="download(`manual_${$('id').value}.json`, JSON.stringify(getManual(), null, 4))">Download Manual</button>
+        <div id="levelsLabel">1/1 Levels</div><br>
+        <button id="left" onclick="setIndex(index - 1)">&lt;</button>
+        <button id="add" onclick="add()">+</button>
+        <button id="right" onclick="setIndex(index + 1)">&gt;</button>
+        <button id="delete" onclick="del()">Delete</button>
+        <button id="clear" onclick="clearKevek()">Clear</button><br>
+        <br>
+        <button id="download" onclick="download(`manual_${$('id').value}_${levels.length}.json`, JSON.stringify(getManual(), null, 4))">Download Manual</button>
         <script>
+            let levels = [{}]
+            let index = 0
+            let statics = ["comment", "date", "time", "seconds"]
             function $(id) {
                 return document.getElementById(id)
             }
+            for (let i of [...Array.from(document.getElementsByTagName("input")), ...Array.from(document.getElementsByTagName("textarea"))]) {
+                if (statics.includes(i.id)) continue
+                i.addEventListener("input", (ts) => {
+                    levels[index][ts.target.id] = ts.target.value
+                })
+            }
+            for (let i of Array.from(document.getElementsByTagName("select"))) {
+                i.addEventListener("change", (ts) => {
+                    levels[index][ts.target.id] = ts.target.value
+                })
+            }
+
+            function add() {
+                levels.push({})
+                setIndex(levels.length - 1)
+            }
+
+            function clearKevek() {
+                levels[index] = {}
+                setIndex(index) // updayett // yes this is an idiocracy reference
+            }
+
+            function setCurrentDate() {
+                let d = new Date()
+                $("date").value = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${(d.getDate()).toString().padStart(2, "0")}`
+                $("time").value = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`
+                $("seconds").value = d.getSeconds()
+            }
+
+            function del() {
+                if (levels.length < 2) return
+                levels[index] = null
+                let oldLevels = levels
+                levels = []
+                for (let i of oldLevels) {
+                    if (i != null) levels.push(i)
+                }
+                setIndex(Math.max(0, index - 1))
+            }
+
+            function setIndex(ind) {
+                ind = Math.max(0, Math.min(ind, levels.length - 1))
+                index = ind;
+                for (let i of [...Array.from(document.getElementsByTagName("input")), ...Array.from(document.getElementsByTagName("textarea")), ...Array.from(document.getElementsByTagName("select"))]) {
+                    if (statics.includes(i.id)) continue
+                    i.value = levels[index][i.id] || null
+                }
+
+                document.getElementById("levelsLabel").innerHTML = `${index + 1}/${levels.length} Levels`
+            }
+
             function getManual() {
-                if ($("id").value == "" || $("id").value == null || $("id").value == undefined) {
-                    alert("You must specify the level ID!")
-                    return null
-                }
                 let tz = (new Date()).getTimezoneOffset()
-                let lvl = {id: Number($("id").value)}
-                function addToLevel(id, numerify) {
-                    if ($(id).value && $(id).value != "null") lvl[id] = numerify ? Number($(id).value) : $(id).value
-                }
-                addToLevel("level_name")
-                addToLevel("username")
-                addToLevel("downloads", true)
-                addToLevel("likes", true)
-                addToLevel("length", true)
-                addToLevel("official_song", true)
-                addToLevel("custom_song", true)
-                addToLevel("description")
-                addToLevel("game_version", true)
-                addToLevel("level_version", true)
-                addToLevel("stars", true)
-                addToLevel("feature_score", true)
-                addToLevel("epic", true)
-                let difficulty = Number($("difficulty").value)
-                switch (difficulty) {
-                    case -1:
-                        lvl.auto = true
-                        break
-                    case 8:
-                        lvl.demon = true
-                        break
-                    case 6:
-                    case 7:
-                        lvl.demon = true
-                        lvl.demon_type = difficulty - 3
-                        break
-                    case 9:
-                    case 10:
-                        lvl.demon = true
-                        lvl.demon_type = difficulty - 4
-                        break
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                        lvl.rating = 10
-                        lvl.rating_sum = difficulty * 10
-                        break
-                    default:
-                        break
-                }
-                return {
+                let manual = {
                     comment: $("comment").value,
-                    created: `${$("date").value} ${$("time").value}:${$("seconds").value}${tz > 0 ? "-" : "+"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`,
-                    levels: [lvl]
+                    created: `${$("date").value} ${$("time").value}:${$("seconds").value.toString().padStart(2, "0")}${tz > 0 ? "-" : "+"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`,
+                    levels: []
                 }
+                let indexx = 0
+                for (let i of levels) {
+                    let lvl = {}
+                    if (!i.id) {
+                        alert(`Level #${indexx + 1}: You must specify the level ID!`)
+                        return null
+                    }
+                    function addToLevel(id, numerify) {
+                        if (i[id]) lvl[id] = numerify ? Number(i[id]) : i[id]
+                    }
+                    addToLevel("level_name")
+                    addToLevel("username")
+                    addToLevel("downloads", true)
+                    addToLevel("likes", true)
+                    addToLevel("length", true)
+                    addToLevel("official_song", true)
+                    addToLevel("custom_song", true)
+                    addToLevel("description")
+                    addToLevel("game_version", true)
+                    addToLevel("level_version", true)
+                    addToLevel("stars", true)
+                    addToLevel("feature_score", true)
+                    addToLevel("epic", true)
+                    let difficulty = Number(i.difficulty)
+                    switch (difficulty) {
+                        case -1:
+                            lvl.auto = true
+                            break
+                        case 8:
+                            lvl.demon = true
+                            break
+                        case 6:
+                        case 7:
+                            lvl.demon = true
+                            lvl.demon_type = difficulty - 3
+                            break
+                        case 9:
+                        case 10:
+                            lvl.demon = true
+                            lvl.demon_type = difficulty - 4
+                            break
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            lvl.rating = 10
+                            lvl.rating_sum = difficulty * 10
+                            break
+                        default:
+                            break
+                    }
+
+                    manual.levels.push(lvl)
+                }
+                return manual
             }
             function download(filename, text) {
                 if (text == "null") return;
