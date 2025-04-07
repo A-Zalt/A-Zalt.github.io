@@ -125,6 +125,10 @@
         </select><br>
         <label for="level_version">Level Version</label>
         <input type="number" id="level_version" placeholder="Level Version" min=-128 max=127><br>
+        <label for="coins">Coins</label>
+        <input type="number" id="coins" placeholder="Coins" min=0 max=3><br>
+        <label for="coins_verified">Verified Coins</label>
+        <input type="checkbox" id="coins_verified"><br>
         <br>
         <div id="levelsLabel">1/1 Levels</div><br>
         <button id="left" onclick="setIndex(index - 1)">&lt;</button>
@@ -144,7 +148,8 @@
             for (let i of [...Array.from(document.getElementsByTagName("input")), ...Array.from(document.getElementsByTagName("textarea"))]) {
                 if (statics.includes(i.id)) continue
                 i.addEventListener("input", (ts) => {
-                    levels[index][ts.target.id] = ts.target.value
+                    if (ts.target.type == "checkbox") levels[index][ts.target.id] = ts.target.checked
+                    else levels[index][ts.target.id] = ts.target.value
                 })
             }
             for (let i of Array.from(document.getElementsByTagName("select"))) {
@@ -186,7 +191,8 @@
                 index = ind;
                 for (let i of [...Array.from(document.getElementsByTagName("input")), ...Array.from(document.getElementsByTagName("textarea")), ...Array.from(document.getElementsByTagName("select"))]) {
                     if (statics.includes(i.id)) continue
-                    i.value = levels[index][i.id] || null
+                    if (i.type == "checkbox") i.checked = levels[index][i.id] || null
+                    else i.value = levels[index][i.id] || null
                 }
 
                 document.getElementById("levelsLabel").innerHTML = `${index + 1}/${levels.length} Levels`
@@ -209,8 +215,10 @@
                     function addToLevel(id, numerify) {
                         if (i[id]) lvl[id] = numerify ? Number(i[id]) : i[id]
                     }
+                    addToLevel("id", true)
                     addToLevel("level_name")
                     addToLevel("username")
+                    addToLevel("user_id", true)
                     addToLevel("downloads", true)
                     addToLevel("likes", true)
                     addToLevel("length", true)
@@ -222,6 +230,9 @@
                     addToLevel("stars", true)
                     addToLevel("feature_score", true)
                     addToLevel("epic", true)
+                    addToLevel("coins", true)
+                    lvl.coins_verified = i.coins_verified
+                    if (i.coins_verified == undefined || i.coins_verified == null) delete lvl.coins_verified
                     let difficulty = Number(i.difficulty)
                     switch (difficulty) {
                         case -1:
