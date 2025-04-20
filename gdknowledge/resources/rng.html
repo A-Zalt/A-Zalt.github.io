@@ -17,7 +17,7 @@
     <p>GD's randomness uses the standard rand() function from C++. An accurate reimplementation of C++'s PRNG in Python can be found <a href="https://gist.github.com/DaniloNC/89ff515689d5f6d7f2a585b098e2c03e">here.</a></p> 
     <p>4 triggers utilize this seed: Random, AdvRand, Advanced Follow and Edit AdvFollow.</p>
     <h2>Random trigger</h2>
-    <p>This one is actually pretty simple to reverse engineer without even reverse engineering the game, as long as you have Mega Hack v8.</p>
+    <p>This one is actually pretty simple to reverse engineer without even looking at the GD binary, as long as you have Mega Hack v8.</p>
     <p>It works as follows: if (rand() / 32767 * 100) is less than or equal to the chance value, activate group 1. Otherwise, activate group 2.</p>
     <h2>AdvRand trigger</h2>
     <p>This one, on the other hand, is more complicated.</p>
