@@ -145,6 +145,8 @@
 - The colors in the level start object are now stored in the single kS38 key as opposed to kS29-kS37<br>
 - The saw textures are now stored as just one half or one quarter in the files to save on space<br>
 - Removed any trace of DJVI - Active from the game, including the song name, the file name (Active.mp3) and the guidelines for the song<br>
+- Your password is no longer sent in plaintext in requests. Instead, it's sent as "GJP" (which is not much better honestly): it's XOR'd with key 37526 and Base64 encoded<br>
+- Level passwords are now XOR'd with key 26364 and Base64 encoded<br>
 - Secret coins no longer appear in the editor<br>
 - All endpoints that ended with 19 now end with 20<br>
 - Added a third GJ_GameSheet. Now, GameSheet01 stores object sprites, GameSheet02 stores icon sprites and a few extra object sprites and GameSheet03 stores menu textures<br>
