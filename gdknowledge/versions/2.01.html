@@ -1,0 +1,31 @@
+<a href="../index.html">Home</a>
+<a href="../gallery.html">Gallery</a>
+<a href="../mirrors.html">Mirrors</a>
+<a href="../resources.html">Resources</a>
+<a href="../versions.html">Versions</a>
+<a href="https://discord.gg/kjUHTuRHHR">Discord Server</a>
+<h1>2.01</h1>
+<h2>Changes from 2.001:</h2>
+- Added an achievement for getting 50 likes on one of your levels<br>
+- Added an achievement for typing your username into the vault<br>
+- Added an achievement for typing 8, 16, 30, 32, 46, 84 into the vault consecutively (also added respective lines for the vault keeper)<br>
+- Updated Deadlocked, fixing the first wave/speed portal skip and the first ball portal skip, along with a few other small changes<br>
+- Added in-game moderator privileges to the game. You can use the Req button from the Help menu to get it if RobTop personally approves you as a moderator. After that, on all levels, there will be a yellow-tinted star button that sends the level to RobTop for a rating<br>
+- Fixed More Games images showing up as small by readding the HD versions of the promo images<br>
+- The "dart" is now referred to as the "wave" in the icon kit<br>
+- One of the Vault Keeper's lines has been changed from "damnit" to "nevermind..."<br>
+- Added LoadData.plist, which contains every rated level ID and its star value up to that point. Also, another list of derated levels and their star values has been added, hardcoded into libcocos2dcpp.so. On account sync (or on game load if current save file is from a version older than 2.01), the game checks every saved level against these lists and assigns them a star value from these lists if it is set to 0<br>
+- There is now an anticheat that kicks you from a level shortly after it detects speedhacking<br>
+- There is now an anticheat that prevents you from gaining more than 2 stars from levels under 30 seconds in length<br>
+- There is now an anticheat that prevents you from gaining more than 10 stars from a level. However, if you save and load, the stars will be awarded due to an oversight<br>
+- There is now a terrible anticheat that prevents you getting stars from Insane and Demon levels that have been beaten in under 10 attempts<br>
+- There is now some sort of mappack stat validation [TODO: research more]<br>
+- [BUGFIX] Start positions no longer disappear when a trigger is placed in the same X position<br>
+
+<h3>Not-in-game content</h3>
+- Manifest version changed from 28 to 29<br>
+- Save file binaryVersion changed from 28 to 29<br>
+- Most endpoints now return hashes that the client checks for. This is an anti-GDPS measure<br>
+
+<h3>Credits:</h3>
+- Colon<br>
