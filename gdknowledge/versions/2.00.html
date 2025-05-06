@@ -142,11 +142,10 @@
 - Save file binaryVersion changed from 25 to 27<br>
 - The unused Level End object (ID: 34) now uses the Start Pos texture and is solid<br>
 - The unused transition trigger (ID: 55) is now solid<br>
-- Removed the 1.8 unlisted grass tileset. It was replaced with a new tileset with new object IDs<br>
 - The colors in the level start object are now stored in the single kS38 key as opposed to kS29-kS37<br>
 - The saw textures are now stored as just one half or one quarter in the files to save on space<br>
 - Removed any trace of DJVI - Active from the game, including the song name, the file name (Active.mp3) and the guidelines for the song<br>
-- Your password is no longer sent in plaintext in requests. Instead, it's sent as "GJP" (which is not much better honestly): it's XOR'd with key 37526 and Base64 encoded<br>
+- Previously unprotected endpoints now send your password encoded as "GJP": it's XOR'd with key 37526 and Base64 encoded<br>
 - Level passwords are now XOR'd with key 26364 and Base64 encoded<br>
 - Secret coins no longer appear in the editor<br>
 - All endpoints that ended with 19 now end with 20<br>
