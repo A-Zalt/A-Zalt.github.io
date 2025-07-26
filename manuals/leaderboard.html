@@ -138,7 +138,7 @@
                 let manual = {
                     comment: $("comment").value,
                     created: `${$("date").value} ${$("time").value}:${$("seconds").value.toString().padStart(2, "0")}.${$("millis").value.toString().padStart(3, "0")}${tz > 0 ? "-" : "+"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`,
-                    type: Number($("type").value) || null,
+                    type: $("type").value != "null" ? Number($("type").value) : null,
                     users: []
                 }
                 let indexx = 0
