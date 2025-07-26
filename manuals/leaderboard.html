@@ -1,0 +1,186 @@
+<html>
+    <head>
+        <title>Leaderboard Converter</title>
+    </head>
+    <body>
+        <label for="comment">Manual Comment</label>
+        <input type="text" id="comment" size="50" placeholder="Manual Comment"/><br>
+        <label for="date">Manual Date (local timezone)</label>
+        <input type="date" id="date"/><input type="time" id="time"/><input type="number" min="0" max="59" id="seconds" placeholder="Seconds" size="5"><input type="number" min="0" max="999" id="millis" placeholder="Millis" size="3">
+        <button id="currentDate" onclick="setDate(Date.now())">Set to current date</button><br>
+        <input type="number" id="unix" placeholder="UNIX timestamp" size="15">
+        <button id="unixSeconds" onclick="setDate(Number($('unix').value) * 1000)">Set date (seconds)</button>
+        <button id="unixMillis" onclick="setDate(Number($('unix').value))">Set date (milliseconds)</button><br>
+        <label for="type">Leaderboard Type</label>
+        <select name="length" id="length">
+            <option value="null">Unknown</option>
+            <option value="0">Top 100</option>
+            <option value="1">Global</option>
+            <option value="2">Creator</option>
+            <option value="3">Top Week</option>
+            <option value="4">Friends</option>
+        </select><br><br>
+        <label for="userID">Rank</label>
+        <input type="number" id="rank" placeholder="Rank"><br>
+        <label for="userID">User ID</label>
+        <input type="number" id="userID" placeholder="User ID"><br>
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Username"><br>
+        <label for="iconID">Icon ID (1-indexed)</label>
+        <input type="number" id="iconID" placeholder="Icon ID"><br>
+        <label for="iconType">Icon Type</label>
+        <select name="iconType" id="iconType">
+            <option value="null">Unknown</option>
+            <option value="0">Cube</option>
+            <option value="1">Ship</option>
+            <option value="2">Ball</option>
+            <option value="3">UFO</option>
+            <option value="4">Wave</option>
+            <option value="5">Robot</option>
+            <option value="6">Spider</option>
+            <option value="7">Swing</option>
+            <option value="8">Jetpack</option>
+        </select><br>
+        <label for="col1ID">Primary Color ID (0-indexed)</label>
+        <input type="number" id="col1ID" placeholder="Primary Color ID"><br>
+        <label for="col2ID">Secondary Color ID (0-indexed)</label>
+        <input type="number" id="col2ID" placeholder="Secondary Color ID"><br>
+        <label for="glow">Icon Glow</label>
+        <input type="checkbox" id="glow"><br>
+        <label for="col3ID">Glow Color ID (0-indexed)</label>
+        <input type="number" id="col3ID" placeholder="Glow Color ID"><br>
+        <label for="stars">Stars</label>
+        <input type="number" id="stars" placeholder="Stars" max="2147483647" min=0 size=10><br>
+        <label for="stars">Demons</label>
+        <input type="number" id="demons" placeholder="Demons" max="2147483647" min=0 size=10><br>
+        <label for="creatorPoints">Creator Points</label>
+        <input type="number" id="creatorPoints" placeholder="Creator Points" max="2147483647" min=0 size=10><br>
+        <label for="secretCoins">Secret Coins</label>
+        <input type="number" id="secretCoins" placeholder="Secret Coins" max="2147483647" min=0 size=10><br>
+        <label for="userCoins">User Coins</label>
+        <input type="number" id="userCoins" placeholder="User Coins" max="2147483647" min=0 size=10><br>
+        <label for="diamonds">Diamonds</label>
+        <input type="number" id="diamonds" placeholder="Diamonds" max="2147483647" min=0 size=10><br>
+        <label for="moons">Moons</label>
+        <input type="number" id="moons" placeholder="Moons" max="2147483647" min=0 size=10><br>
+        <br>
+        <div id="levelsLabel">1/1 Users</div><br>
+        <button id="left" onclick="setIndex(index - 1)">&lt;</button>
+        <button id="add" onclick="add()">+</button>
+        <button id="right" onclick="setIndex(index + 1)">&gt;</button>
+        <button id="delete" onclick="del()">Delete</button>
+        <button id="clear" onclick="clearKevek()">Clear</button><br>
+        <br>
+        <button id="download" onclick="download(`manual_${$('date').value}_${levels.length}.json`, JSON.stringify(getManual(), null, 4))">Download Manual</button>
+        <script>
+            let levels = [{}]
+            let index = 0
+            let statics = ["comment", "date", "time", "seconds", "millis", "unix", "type"]
+            function $(id) {
+                return document.getElementById(id)
+            }
+            for (let i of [...Array.from(document.getElementsByTagName("input")), ...Array.from(document.getElementsByTagName("textarea"))]) {
+                if (statics.includes(i.id)) continue
+                i.addEventListener("input", (ts) => {
+                    if (ts.target.type == "checkbox") levels[index][ts.target.id] = ts.target.checked
+                    else levels[index][ts.target.id] = ts.target.value
+                })
+            }
+            for (let i of Array.from(document.getElementsByTagName("select"))) {
+                i.addEventListener("change", (ts) => {
+                    levels[index][ts.target.id] = ts.target.value
+                })
+            }
+
+            function add() {
+                levels.push({})
+                setIndex(levels.length - 1)
+            }
+
+            function clearKevek() {
+                levels[index] = {}
+                setIndex(index) // updayett // yes this is an idiocracy reference
+            }
+
+            function setDate(date) {
+                let d = new Date(date)
+                $("date").value = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${(d.getDate()).toString().padStart(2, "0")}`
+                $("time").value = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`
+                $("seconds").value = d.getSeconds()
+                $("millis").value = d.getMilliseconds()
+            }
+
+            function del() {
+                if (levels.length < 2) return
+                levels[index] = null
+                let oldLevels = levels
+                levels = []
+                for (let i of oldLevels) {
+                    if (i != null) levels.push(i)
+                }
+                setIndex(Math.max(0, index - 1))
+            }
+
+            function setIndex(ind) {
+                ind = Math.max(0, Math.min(ind, levels.length - 1))
+                index = ind;
+                for (let i of [...Array.from(document.getElementsByTagName("input")), ...Array.from(document.getElementsByTagName("textarea")), ...Array.from(document.getElementsByTagName("select"))]) {
+                    if (statics.includes(i.id)) continue
+                    if (i.type == "checkbox") i.checked = levels[index][i.id] || null
+                    else i.value = levels[index][i.id] || null
+                }
+
+                document.getElementById("levelsLabel").innerHTML = `${index + 1}/${levels.length} Users`
+            }
+
+            function getManual() {
+                let tz = (new Date()).getTimezoneOffset()
+                let manual = {
+                    comment: $("comment").value,
+                    created: `${$("date").value} ${$("time").value}:${$("seconds").value.toString().padStart(2, "0")}.${$("millis").value.toString().padStart(3, "0")}${tz > 0 ? "-" : "+"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`,
+                    type: Number($("type").value) || null,
+                    users: []
+                }
+                let indexx = 0
+                for (let i of levels) {
+                    let lvl = {}
+                    function addToLevel(id, numerify) {
+                        if (i[id]) lvl[id] = numerify ? Number(i[id]) : i[id]
+                    }
+                    addToLevel("userID", true)
+                    addToLevel("username")
+                    addToLevel("stars", true)
+                    addToLevel("demons", true)
+                    addToLevel("rank", true)
+                    addToLevel("iconID", true)
+                    addToLevel("iconType", true)
+                    addToLevel("col1ID", true)
+                    addToLevel("col2ID", true)
+                    lvl.glow = i.glow
+                    if (i.glow == undefined || i.glow == null) delete lvl.glow
+                    addToLevel("secretCoins", true)
+                    addToLevel("userCoins", true)
+                    addToLevel("diamonds", true)
+                    addToLevel("moons", true)
+                    addToLevel("col3ID", true)
+                    manual.users.push(lvl)
+                }
+                return manual
+            }
+            function download(filename, text) {
+                if (text == "null") return;
+
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            }
+        </script>
+    </body>
+</html>
