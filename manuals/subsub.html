@@ -6,7 +6,7 @@
         <table border="1">
             <tr>
                 <td>
-                    <h2>Parent Submission</h2>
+                    <h3>Parent Submission</h3>
                     <label for="comment">Manual Comment</label>
                     <input type="text" id="comment" size="50" placeholder="Manual Comment"/><br>
                     <label for="date">Manual Date (local timezone)</label>
@@ -20,7 +20,7 @@
             <tr>
 
                 <td>
-                    <h2>Subsubmission</h2>
+                    <h3>Subsubmission</h3>
                     <label for="comment_subsub">Manual Comment</label>
                     <input type="text" id="comment_subsub" size="50" placeholder="Manual Comment"/><br>
                     <label for="date_subsub">Manual Date (local timezone)</label>
@@ -40,7 +40,7 @@
             <tr>
 
                 <td>
-                    <h2>Levels</h2>
+                    <h3>Levels</h3>
                     <label for="id">Level ID</label>
                     <input type="number" id="id" placeholder="Level ID"><br>
                     <label for="level_name">Level Name</label>
@@ -162,6 +162,8 @@
                     <input type="number" id="coins" placeholder="Coins" min=0 max=3><br>
                     <label for="coins_verified">Verified Coins</label>
                     <input type="checkbox" id="coins_verified"><br>
+                    <label for="original">Original ID</label>
+                    <input type="number" id="original" placeholder="Original ID"><br>
                     <br>
                     <div id="levelsLabel">1/1 Levels</div><br>
                     <button id="left" onclick="setIndex(index - 1)">&lt;</button>
@@ -177,8 +179,8 @@
             let subs = [{levels: [{}]}]
             let index = 0
             let ssIndex = 0
-            let subChangeables = ["comment_subsub", "date_subsub", "time_subsub", "seconds_subsub", "millis_subsub", "unix_subsub"]
-            let statics = ["comment", "date", "time", "seconds", "millis", "unix", ...subChangeables]
+            let subChangeables = ["comment_subsub", "date_subsub", "time_subsub", "seconds_subsub", "millis_subsub"]
+            let statics = ["comment", "date", "time", "seconds", "millis", "unix", "unix_subsub", ...subChangeables]
             function $(id) {
                 return document.getElementById(id)
             }
@@ -187,11 +189,15 @@
                 subs[ssIndex].comment = ts.target.value
             })
 
+            function updateSSCreated() {
+                let tz = (new Date()).getTimezoneOffset()
+                subs[ssIndex].created = `${$("date_subsub").value} ${$("time_subsub").value}:${$("seconds_subsub").value.toString().padStart(2, "0")}.${$("millis_subsub").value.toString().padStart(3, "0")}${tz > 0 ? "-" : "+"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`
+            }
+
             for (let i of subChangeables) {
                 if (i == "comment_subsub") continue
-                $(i).addEventListener("input", (ts) => {
-                    let tz = (new Date()).getTimezoneOffset()
-                    subs[ssIndex].created = `${$("date_subsub").value} ${$("time_subsub").value}:${$("seconds_subsub").value.toString().padStart(2, "0")}.${$("millis_subsub").value.toString().padStart(3, "0")}${tz > 0 ? "-" : "+"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`
+                $(i).addEventListener("input", () => {
+                    updateSSCreated()
                 })
             }
             
@@ -245,6 +251,8 @@
                 $("time_subsub").value = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`
                 $("seconds_subsub").value = d.getSeconds()
                 $("millis_subsub").value = d.getMilliseconds()
+                updateSSCreated()
+                // setSSIndex(ssIndex)
             }
 
             function del() {
@@ -272,12 +280,13 @@
             function setIndex(ind) {
                 ind = Math.max(0, Math.min(ind, subs[ssIndex].levels.length - 1))
                 index = ind;
+                subs[ssIndex].index = ind
                 for (let i of [...Array.from(document.getElementsByTagName("input")), ...Array.from(document.getElementsByTagName("textarea")), ...Array.from(document.getElementsByTagName("select"))]) {
                     if (statics.includes(i.id)) continue
                     if (i.type == "checkbox") i.checked = subs[ssIndex].levels[index][i.id] || null
                     else i.value = subs[ssIndex].levels[index][i.id] || null
                 }
-
+                
                 document.getElementById("levelsLabel").innerHTML = `${index + 1}/${subs[ssIndex].levels.length} Levels`
             }
 
@@ -288,9 +297,15 @@
                 if (subs[ssIndex].created) {
                     $("date_subsub").value = subs[ssIndex].created.split(" ")[0]
                     let values = subs[ssIndex].created.split(" ")[1].split(":")
-                    $("time_subsub").value = `${values[0]}:${values[1]}`
-                    $("seconds_subsub").value = Number(values[2].split(".")[0])
-                    $("millis_subsub").value = Number(values[2].split(".")[1].split(/[+-]/)[0])
+                    if (values.length == 4) {
+                        $("time_subsub").value = `${values[0]}:${values[1]}`
+                        $("seconds_subsub").value = Number(values[2].split(".")[0])
+                        $("millis_subsub").value = Number(values[2].split(".")[1].split(/[+-]/)[0])
+                    } else {
+                        $("time_subsub").value = ""
+                        $("seconds_subsub").value = ""
+                        $("millis_subsub").value = ""
+                    }
                 } else {
                     $("date_subsub").value = ""
                     $("time_subsub").value = ""
@@ -300,7 +315,7 @@
 
                 document.getElementById("subsLabel").innerHTML = `${ssIndex + 1}/${subs.length} Subsubmissions`
 
-                setIndex(0)
+                setIndex(subs[ssIndex].index || 0)
             }
 
             function getManual() {
@@ -343,6 +358,7 @@
                         addToLevel("feature_score", true)
                         addToLevel("epic", true)
                         addToLevel("coins", true)
+                        addToLevel("original", true)
                         lvl.coins_verified = i.coins_verified
                         if (i.coins_verified == undefined || i.coins_verified == null) delete lvl.coins_verified
                         let difficulty = Number(i.difficulty)
