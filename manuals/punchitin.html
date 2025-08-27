@@ -132,6 +132,8 @@
         <input type="number" id="coins" placeholder="Coins" min=0 max=3><br>
         <label for="coins_verified">Verified Coins</label>
         <input type="checkbox" id="coins_verified"><br>
+        <label for="original">Original ID</label>
+        <input type="number" id="original" placeholder="Original ID"><br>
         <br>
         <div id="levelsLabel">1/1 Levels</div><br>
         <button id="left" onclick="setIndex(index - 1)">&lt;</button>
@@ -235,6 +237,7 @@
                     addToLevel("feature_score", true)
                     addToLevel("epic", true)
                     addToLevel("coins", true)
+                    addToLevel("original", true)
                     lvl.coins_verified = i.coins_verified
                     if (i.coins_verified == undefined || i.coins_verified == null) delete lvl.coins_verified
                     let difficulty = Number(i.difficulty)
