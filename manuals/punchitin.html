@@ -3,6 +3,8 @@
         <title>Manual Generator</title>
     </head>
     <body>
+        <label for="resume">Upload a manual:</label>
+        <input type="file" onchange="fileChanged(this)" onclick="this.value=null;" id="resume" name="resume" accept=".json" /><br><br>
         <label for="comment">Manual Comment</label>
         <input type="text" id="comment" size="50" placeholder="Manual Comment"/><br>
         <label for="date">Manual Date (local timezone)</label>
@@ -202,6 +204,44 @@
                 }
 
                 document.getElementById("levelsLabel").innerHTML = `${index + 1}/${levels.length} Levels`
+            }
+
+            function fileChanged(file) {
+                let rawFile = file.files[0]
+                if (rawFile) {
+                    if (!confirm("Are you sure you want to override the current manual? Changes will not be saved!")) {
+                        return
+                    }
+                    let reader = new FileReader()
+                    reader.readAsText(rawFile, "UTF-8")
+                    reader.onload = function (evt) {
+                        try {
+                            let json = JSON.parse(evt.target.result)
+                            if (!json.levels) {
+                                if (json.submissions) {
+                                    alert("This manual uses subsubmissions, which are not supported on this page!")
+                                } else {
+                                    alert("This manual either does not have any levels or is invalid!")
+                                }
+                                return
+                            }
+                            $("comment").value = json.comment || ""
+                            let date = new Date(json.created)
+                            $("date").value = json.created.split(" ")[0]
+                            $("time").value = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
+                            $("seconds").value = date.getSeconds()
+                            $("millis").value = date.getMilliseconds()
+                            levels = json.levels
+                            setIndex(0)
+                        } catch (e) {
+                            console.error(e)
+                            alert("Could not read file!")
+                        }
+                    }
+                    reader.onerror = function (evt) {
+                        alert("Could not read file!")
+                    }
+                }
             }
 
             function getManual() {
