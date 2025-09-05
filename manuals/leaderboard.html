@@ -12,7 +12,7 @@
         <button id="unixSeconds" onclick="setDate(Number($('unix').value) * 1000)">Set date (seconds)</button>
         <button id="unixMillis" onclick="setDate(Number($('unix').value))">Set date (milliseconds)</button><br>
         <label for="type">Leaderboard Type</label>
-        <select name="type" id="type">
+        <select name="length" id="length">
             <option value="null">Unknown</option>
             <option value="0">Top 100</option>
             <option value="1">Global</option>
@@ -51,14 +51,14 @@
         <input type="number" id="col3ID" placeholder="Glow Color ID"><br>
         <label for="stars">Stars</label>
         <input type="number" id="stars" placeholder="Stars" max="2147483647" min=0 size=10><br>
-        <label for="stars">Demons</label>
-        <input type="number" id="demons" placeholder="Demons" max="2147483647" min=0 size=10><br>
-        <label for="creatorPoints">Creator Points</label>
-        <input type="number" id="creatorPoints" placeholder="Creator Points" max="2147483647" min=0 size=10><br>
         <label for="secretCoins">Secret Coins</label>
         <input type="number" id="secretCoins" placeholder="Secret Coins" max="2147483647" min=0 size=10><br>
         <label for="userCoins">User Coins</label>
         <input type="number" id="userCoins" placeholder="User Coins" max="2147483647" min=0 size=10><br>
+        <label for="stars">Demons</label>
+        <input type="number" id="demons" placeholder="Demons" max="2147483647" min=0 size=10><br>
+        <label for="creatorPoints">Creator Points</label>
+        <input type="number" id="creatorPoints" placeholder="Creator Points" max="2147483647" min=0 size=10><br>
         <label for="diamonds">Diamonds</label>
         <input type="number" id="diamonds" placeholder="Diamonds" max="2147483647" min=0 size=10><br>
         <label for="moons">Moons</label>
@@ -138,7 +138,7 @@
                 let manual = {
                     comment: $("comment").value,
                     created: `${$("date").value} ${$("time").value}:${$("seconds").value.toString().padStart(2, "0")}.${$("millis").value.toString().padStart(3, "0")}${tz > 0 ? "-" : "+"}${Math.abs(Math.floor(tz / 60)).toString().padStart(2, "0")}:${(tz % 60).toString().padStart(2, "0")}`,
-                    type: $("type").value != "null" ? Number($("type").value) : null,
+                    type: Number($("type").value) || null,
                     users: []
                 }
                 let indexx = 0
@@ -151,6 +151,7 @@
                     addToLevel("username")
                     addToLevel("stars", true)
                     addToLevel("demons", true)
+                    addToLevel("creatorPoints", true)
                     addToLevel("rank", true)
                     addToLevel("iconID", true)
                     addToLevel("iconType", true)
