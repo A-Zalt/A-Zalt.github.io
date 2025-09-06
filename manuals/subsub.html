@@ -341,6 +341,33 @@
                             $("time").value = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
                             $("seconds").value = date.getSeconds()
                             $("millis").value = date.getMilliseconds()
+                            for (let sub = 0; sub < json.submissions.length; sub++) {
+                                for (let i = 0; i < json.submissions[sub].levels.length; i++) {
+                                    let level = json.submissions[sub].levels[i]
+                                    if (level.auto) {
+                                        level.difficulty = -1
+                                    } else if (level.demon) {
+                                        switch (level.demon_type) {
+                                            case 3:
+                                            case 4:
+                                                level.difficulty = level.demon_type + 3
+                                                break
+                                            case 6:
+                                            case 7:
+                                                level.difficulty = level.demon_type + 4
+                                                break
+                                            default:
+                                                level.difficulty = 8
+                                                break
+                                        }
+                                    } else {
+                                        if (level.rating_sum / level.rating) {
+                                            level.difficulty = Math.floor(level.rating_sum / level.rating)
+                                        }
+                                    }
+                                    json.submissions[sub].levels[i] = level
+                                }
+                            }
                             subs = json.submissions
                             setSSIndex(0)
                         } catch (e) {
