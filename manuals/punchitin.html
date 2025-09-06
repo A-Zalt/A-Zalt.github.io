@@ -151,6 +151,7 @@
             let levels = [{}]
             let index = 0
             let statics = ["comment", "date", "time", "seconds", "millis", "unix"]
+            let copiedLevel = {}
             function $(id) {
                 return document.getElementById(id)
             }
@@ -178,11 +179,11 @@
             }
 
             function copy() {
-                copiedLevel = subs[ssIndex].levels[index]
+                copiedLevel = levels[index]
             }
 
             function paste() {
-                subs[ssIndex].levels[index] = copiedLevel
+                levels[index] = copiedLevel
                 setIndex(index)
             }
 
