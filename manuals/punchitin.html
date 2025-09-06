@@ -231,6 +231,31 @@
                             $("time").value = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
                             $("seconds").value = date.getSeconds()
                             $("millis").value = date.getMilliseconds()
+                            for (let i = 0; i < json.levels.length; i++) {
+                                let level = json.levels[i]
+                                if (level.auto) {
+                                    level.difficulty = -1
+                                } else if (level.demon) {
+                                    switch (level.demon_type) {
+                                        case 3:
+                                        case 4:
+                                            level.difficulty = level.demon_type + 3
+                                            break
+                                        case 6:
+                                        case 7:
+                                            level.difficulty = level.demon_type + 4
+                                            break
+                                        default:
+                                            level.difficulty = 8
+                                            break
+                                    }
+                                } else {
+                                    if (level.rating_sum / level.rating) {
+                                        level.difficulty = Math.floor(level.rating_sum / level.rating)
+                                    }
+                                }
+                                json.levels[i] = level
+                            }
                             levels = json.levels
                             setIndex(0)
                         } catch (e) {
