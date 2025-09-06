@@ -142,7 +142,9 @@
         <button id="add" onclick="add()">+</button>
         <button id="right" onclick="setIndex(index + 1)">&gt;</button>
         <button id="delete" onclick="del()">Delete</button>
-        <button id="clear" onclick="clearKevek()">Clear</button><br>
+        <button id="clear" onclick="clearKevek()">Clear</button>
+        <button id="copy" onclick="copy()">Copy</button>
+        <button id="paste" onclick="paste()">Paste</button><br>
         <br>
         <button id="download" onclick="download(`manual_${$('id').value}_${levels.length}.json`, JSON.stringify(getManual(), null, 4))">Download Manual</button>
         <script>
@@ -173,6 +175,15 @@
             function clearKevek() {
                 levels[index] = {}
                 setIndex(index) // updayett // yes this is an idiocracy reference
+            }
+
+            function copy() {
+                copiedLevel = subs[ssIndex].levels[index]
+            }
+
+            function paste() {
+                subs[ssIndex].levels[index] = copiedLevel
+                setIndex(index)
             }
 
             function setDate(date) {
@@ -231,31 +242,6 @@
                             $("time").value = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`
                             $("seconds").value = date.getSeconds()
                             $("millis").value = date.getMilliseconds()
-                            for (let i = 0; i < json.levels.length; i++) {
-                                let level = json.levels[i]
-                                if (level.auto) {
-                                    level.difficulty = -1
-                                } else if (level.demon) {
-                                    switch (level.demon_type) {
-                                        case 3:
-                                        case 4:
-                                            level.difficulty = level.demon_type + 3
-                                            break
-                                        case 6:
-                                        case 7:
-                                            level.difficulty = level.demon_type + 4
-                                            break
-                                        default:
-                                            level.difficulty = 8
-                                            break
-                                    }
-                                } else {
-                                    if (level.rating_sum / level.rating) {
-                                        level.difficulty = Math.floor(level.rating_sum / level.rating)
-                                    }
-                                }
-                                json.levels[i] = level
-                            }
                             levels = json.levels
                             setIndex(0)
                         } catch (e) {
