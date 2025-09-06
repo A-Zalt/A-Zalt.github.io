@@ -172,7 +172,9 @@
                     <button id="add" onclick="add()">+</button>
                     <button id="right" onclick="setIndex(index + 1)">&gt;</button>
                     <button id="delete" onclick="del()">Delete</button>
-                    <button id="clear" onclick="clearKevek()">Clear</button><br>
+                    <button id="clear" onclick="clearKevek()">Clear</button>
+                    <button id="copy" onclick="copy()">Copy</button>
+                    <button id="paste" onclick="paste()">Paste</button><br>
                 </td>
             </tr>
         </table>
@@ -183,6 +185,7 @@
             let ssIndex = 0
             let subChangeables = ["comment_subsub", "date_subsub", "time_subsub", "seconds_subsub", "millis_subsub"]
             let statics = ["comment", "date", "time", "seconds", "millis", "unix", "unix_subsub", ...subChangeables]
+            let copiedLevel = {}
             function $(id) {
                 return document.getElementById(id)
             }
@@ -232,6 +235,15 @@
             function clearKevek() {
                 subs[ssIndex].levels[index] = {}
                 setIndex(index) // no more idiocracy reference
+            }
+
+            function copy() {
+                copiedLevel = subs[ssIndex].levels[index]
+            }
+
+            function paste() {
+                subs[ssIndex].levels[index] = copiedLevel
+                setIndex(index)
             }
 
             function clearSS() {
