@@ -238,11 +238,17 @@
             }
 
             function copy() {
-                copiedLevel = subs[ssIndex].levels[index]
+                copiedLevel = {}
+                for (let i of Object.entries(subs[ssIndex].levels[index])) {
+                    copiedLevel[i[0]] = i[1]
+                }
             }
 
             function paste() {
-                subs[ssIndex].levels[index] = copiedLevel
+                subs[ssIndex].levels[index] = {}
+                for (let i of Object.entries(copiedLevel)) {
+                    subs[ssIndex].levels[index][i[0]] = i[1]
+                }
                 setIndex(index)
             }
 
