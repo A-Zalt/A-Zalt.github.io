@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <title>OMNImenu -> 2.2 converter</title>
+    </head>
+    <body>
+        <label for="omnigmd">Choose an OMNImenu .gmd file:</label><br>
+        <input type="file" onchange="fileChanged(this)" onclick="this.value=null;" id="gmd" name="gmd" accept=".gmd" />
+        <br>
+        <button id="download" onclick="download(filename, result)" disabled=true>Download Manual</button>
+        <script>
+            let filename = ""
+            let result = ""
+            function fileChanged(file) {
+                let gmd = file.files[0]
+                if (gmd) {
+                    filename = gmd.name.split(".gmd")[0] + " (2.2).gmd"
+                    let reader = new FileReader()
+                    reader.readAsText(gmd, "UTF-8")
+                    reader.onload = function (evt) {
+                        try {
+                            result = evt.target.result
+                            .replace(/<key>/g, "<k>")
+                            .replace(/<\/key>/g, "</k>")
+                            .replace(/<integer>/g, "<i>")
+                            .replace(/<\/integer>/g, "</i>")
+                            .replace(/<string>/g, "<s>")
+                            .replace(/<\/string>/g, "</s>")
+                            .replace(/<true \/>/g, "<t />")
+                            .replace(/<false \/>/g, "<f />")
+                            .replace(/<true\/>/g, "<t/>")
+                            .replace(/<false\/>/g, "<f/>")
+                            .replace(/<real>/g, "<r>")
+                            .replace(/<\/real>/g, "</r>")
+                            .replace(/<\/dict>\n?\t*<\/plist>/, "<k>k50</k><i>45</i></dict></plist>")
+                            document.getElementById("download").disabled = false
+                        } catch (e) {
+                            console.log(e)
+                            document.getElementById("download").disabled = true
+                        }
+                    }
+                    reader.onerror = function (evt) {
+                        alert("Could not read file!")
+                        document.getElementById("download").disabled = true
+                    }
+                }
+            }
+            function download(filename, text) {
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            }
+        </script>
+    </body>
+</html>
+
