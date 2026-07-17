@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <title>Guideline Creator</title>
+        <style>
+            h1 {
+                font-family: sans-serif;
+                color: white;
+                text-align: center;
+            }
+            #panel {
+                border: 4px;
+                border-radius: 12px;
+                min-width: 200px;
+                height: 150px;
+                border-color: #4f4f9f;
+                border-style: solid;
+                background-color: #2f2f8f3f;
+            }
+            body {
+                background-color: #16161d;
+            }
+            .slider {
+                width: 600px; 
+            }
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .guideline {
+                width: 1px;
+            }
+            .guideline,#playLine {
+                height: 150px;
+                position: absolute;
+                padding: 0 10px;
+                box-sizing: content-box;
+                background-clip: content-box;
+            }
+            .orange {
+                background-color: #ff7f00;
+            }
+            .yellow {
+                background-color: #ffff00;
+            }
+            .green {
+                background-color: #7fff00;
+            }
+            .colorBtn {
+                font-size: 36px;
+                border-radius: 5px;
+                border: none;
+                width: 100px;
+                height: 100px;
+                margin: 5px 0;
+            }
+            #playBtn {
+                width: 100px;
+                height: 30px;
+                border-radius: 5px;
+                border: none;
+                margin: 5px 0;
+                font-size: 18px;
+            }
+            #playLine {
+                width: 3px;
+                background-color: #00ffff;
+            }
+            label, #upload {
+                font-family: sans-serif;
+                color: white;
+            }
+            #exportOld, #exportNew {
+                width: 150px;
+                height: 30px;
+                border-radius: 5px;
+                border: none;
+                margin: 5px 0;
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 class="header">Guideline Creator</h1>
+        <div class="center">
+            <input type="range" min="0" max="100" step="0.01" value="0" class="slider" id="slider"></input>
+        </div>
+        <div id="panel" oncontextmenu="return false;">
+            <!-- <div class="yellowGL" style="left: 10px;" onmousedown="test()" ontouchstart="test()"></div> -->
+        </div>
+        <label for="upload">Upload Song</label>
+        <br>
+        <input type="file" id="upload" />
+        <br>
+        <button id="playBtn">Play</button>
+        <br>
+        <button id="orangeBtn" class="orange colorBtn">0.8</button>
+        <button id="yellowBtn" class="yellow colorBtn">0.9</button>
+        <button id="greenBtn"  class="green colorBtn">1.0</button>
+        <br>
+        <button id="exportOld">Export (pre-1.9)</button>
+        <button id="exportNew">Export (1.9+)</button>
+        <script src="./index.js"></script>
+    </body>
+</html>
