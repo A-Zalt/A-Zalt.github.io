@@ -64,10 +64,6 @@ function getCurrentTime() {
     return Number(((Date.now() - startPlayDate) / 1000 + getSliderX() / 100).toFixed(2))
 }
 
-setInterval(() => {
-    console.log(lastRenderedIndex)
-}, 50)
-
 function play() {
     isPlaying = !isPlaying
     slider.disabled = isPlaying
