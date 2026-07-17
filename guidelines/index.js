@@ -9,10 +9,16 @@ let cameraX = 0;
 let prevValue = 0
 const audio = new Audio();
 const glMap = {}
+glMap[0.7] = "red"
 glMap[0.8] = "orange"
 glMap[0.9] = "yellow"
 glMap[1] = "green"
 const GLOBAL_MARGIN = 10
+let lastRenderedIndex = 0
+
+function timeWithinBoundaries(coord) {
+    return coord >= (cameraX + GLOBAL_MARGIN) / 100 && coord < (cameraX + panel.clientWidth - GLOBAL_MARGIN) / 100
+}
 
 function render() {
     if (isPlaying) {
@@ -21,9 +27,11 @@ function render() {
         panel.innerHTML = ""
     }
     let index = 0
+    lastRenderedIndex = 0
     for (let i of guidelines) {
-        if (i[0] >= (cameraX + GLOBAL_MARGIN) / 100 && i[0] < (cameraX + panel.clientWidth - GLOBAL_MARGIN) / 100) {
+        if (timeWithinBoundaries(i[0])) {
             panel.innerHTML += `<div data-index="${index}" class="${glMap[i[1]]} guideline" style="left: ${Math.round(i[0] * 100 + GLOBAL_MARGIN - cameraX)}px;"></div>`
+            if (lastRenderedIndex < index) lastRenderedIndex = index
         }
         index++
     }
@@ -36,11 +44,16 @@ function getGuidelineString(sep) {
 function test() {
     console.log(panel.clientWidth)
 }
-function reorderGuidelines() {
-    guidelines = guidelines.sort((a, b) => {
+function reorderArr(arr) {
+    return arr.sort((a, b) => {
         if (a[0]) return a[0] - b[0]
         else return a - b[0]
     })
+}
+function reorderGuidelines() {
+    let currLastGL = guidelines[lastRenderedIndex]
+    guidelines = reorderArr(guidelines)
+    lastRenderedIndex = guidelines.findIndex(e => currLastGL[0] == e[0] && currLastGL[1] == e[1])
 }
 function getSliderX() {
     if (guidelines.length <= 0) return 0
@@ -48,8 +61,12 @@ function getSliderX() {
     return lastX * (slider.value / 100)
 }
 function getCurrentTime() {
-    return Number(((Date.now() - startPlayDate) / 1000).toFixed(2))
+    return Number(((Date.now() - startPlayDate) / 1000 + getSliderX() / 100).toFixed(2))
 }
+
+setInterval(() => {
+    console.log(lastRenderedIndex)
+}, 50)
 
 function play() {
     isPlaying = !isPlaying
@@ -67,11 +84,15 @@ function play() {
                 cameraX = cameraX + dt;
                 for (let i of panel.getElementsByClassName("guideline")) {
                     let newX = Math.round(Number(i.style.left.split("px")[0]) - dt);
-                    if (newX < GLOBAL_MARGIN) {
+                    if (!timeWithinBoundaries((newX + cameraX) / 100)) {
                         panel.removeChild(i)
                     } else {
                         i.style = `left: ${newX}px;`
                     }
+                }
+                if (guidelines[lastRenderedIndex + 1] && timeWithinBoundaries(guidelines[lastRenderedIndex + 1][0] + 0.1)) {
+                    lastRenderedIndex++
+                    addGuidelineVisual(lastRenderedIndex)
                 }
             } else x = x + dt;
             playLine.style = `left: ${x + GLOBAL_MARGIN - 1}`
@@ -93,10 +114,16 @@ function play() {
 
 playBtn.addEventListener("click", play)
 
+function addGuidelineVisual(index) {
+    panel.innerHTML += `<div data-index="${index}" class="${glMap[guidelines[index][1]]} guideline" style="left: ${Math.round(guidelines[index][0] * 100 + GLOBAL_MARGIN - cameraX)}px;"></div>`
+}
+
 function addGuideline(time, type) {
     guidelines.push([time, type])
-    if (time >= (cameraX + GLOBAL_MARGIN) / 100 && time < (cameraX + panel.clientWidth - GLOBAL_MARGIN) / 100) {
-        panel.innerHTML += `<div data-index="${guidelines[guidelines.length - 1]}" class="${glMap[type]} guideline" style="left: ${Math.round(time * 100 + GLOBAL_MARGIN - cameraX)}px;"></div>`
+    let rendering = timeWithinBoundaries(time)
+    if (rendering) {
+        addGuidelineVisual(guidelines.length - 1)
+        lastRenderedIndex = guidelines.length - 1
     }
     reorderGuidelines()
 }
@@ -136,6 +163,8 @@ document.body.addEventListener("contextmenu", (evt) => {
         console.log(evt.target.dataset.index)
         guidelines = guidelines.filter((_, i) => i != evt.target.dataset.index)
         panel.removeChild(evt.target)
+        if (lastRenderedIndex < guidelines.length)
+            lastRenderedIndex = guidelines.length - 1
         return false
     }
     return true
@@ -159,4 +188,25 @@ exportNew.addEventListener("click", () => {
     if (guidelines.length < 1) return alert("There's nothing to copy!")
     navigator.clipboard.writeText(getGuidelineString("~"))
     alert("Copied guideline string to clipboard!")
+})
+import_.addEventListener("click", () => {
+    let val = prompt("Paste guideline string:")
+    if (!val) {
+        return alert("Guideline string is empty!")
+    }
+    let split = val.split(/;|~/)
+    let newGuidelines = []
+    lastRenderedIndex = 0
+    for (let i = 0; i < split.length; i += 2) {
+        let type = Number(split[i + 1])
+        let time = Number(split[i]) || 0
+        if (type == 0 || isNaN(type)) type = 0.8
+        if (type != 0.8 && type != 0.9 && type != 1) type = 0.7
+        newGuidelines.push([time, type])
+        if (timeWithinBoundaries(time)) {
+            lastRenderedIndex = i / 2
+        }
+    }
+    guidelines = reorderArr(newGuidelines)
+    render()
 })
