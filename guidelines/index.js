@@ -79,7 +79,7 @@ function play() {
         }, 10)
         startPlayDate = Date.now()
         prevDate = startPlayDate
-        audio.fastSeek(cameraX / 100)
+        audio.currentTime = cameraX / 100
         audio.play()
     } else {
         x = 0;
