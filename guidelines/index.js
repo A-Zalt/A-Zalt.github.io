@@ -20,10 +20,12 @@ function render() {
     } else {
         panel.innerHTML = ""
     }
+    let index = 0
     for (let i of guidelines) {
         if (i[0] >= (cameraX + GLOBAL_MARGIN) / 100 && i[0] < (cameraX + panel.clientWidth - GLOBAL_MARGIN) / 100) {
-            panel.innerHTML += `<div class="${glMap[i[1]]} guideline" style="left: ${Math.round(i[0] * 100 + GLOBAL_MARGIN - cameraX)}px;"></div>`
+            panel.innerHTML += `<div data-index="${index}" class="${glMap[i[1]]} guideline" style="left: ${Math.round(i[0] * 100 + GLOBAL_MARGIN - cameraX)}px;"></div>`
         }
+        index++
     }
     // let sliderValue = getSlider().value
     // console.log(sliderValue)
@@ -94,7 +96,7 @@ playBtn.addEventListener("click", play)
 function addGuideline(time, type) {
     guidelines.push([time, type])
     if (time >= (cameraX + GLOBAL_MARGIN) / 100 && time < (cameraX + panel.clientWidth - GLOBAL_MARGIN) / 100) {
-        panel.innerHTML += `<div class="${glMap[type]} guideline" style="left: ${Math.round(time * 100 + GLOBAL_MARGIN - cameraX)}px;"></div>`
+        panel.innerHTML += `<div data-index="${guidelines[guidelines.length - 1]}" class="${glMap[type]} guideline" style="left: ${Math.round(time * 100 + GLOBAL_MARGIN - cameraX)}px;"></div>`
     }
     reorderGuidelines()
 }
@@ -131,6 +133,8 @@ greenBtn.addEventListener("click", () => {
 document.body.addEventListener("contextmenu", (evt) => {
     if (evt.target.id == "panel") return false
     if (evt.target.className.match("guideline")) {
+        console.log(evt.target.dataset.index)
+        guidelines = guidelines.filter((_, i) => i != evt.target.dataset.index)
         panel.removeChild(evt.target)
         return false
     }
