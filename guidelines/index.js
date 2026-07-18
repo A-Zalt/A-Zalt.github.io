@@ -41,9 +41,6 @@ function render() {
 function getGuidelineString(sep) {
     return guidelines.map(a => a.join(sep)).join(sep)
 }
-function test() {
-    console.log(panel.clientWidth)
-}
 function reorderArr(arr) {
     return arr.sort((a, b) => {
         if (a[0]) return a[0] - b[0]
@@ -156,15 +153,33 @@ greenBtn.addEventListener("click", () => {
 document.body.addEventListener("contextmenu", (evt) => {
     if (evt.target.id == "panel") return false
     if (evt.target.className.match("guideline")) {
-        console.log(evt.target.dataset.index)
         guidelines = guidelines.filter((_, i) => i != evt.target.dataset.index)
         panel.removeChild(evt.target)
         if (lastRenderedIndex < guidelines.length)
             lastRenderedIndex = guidelines.length - 1
+        render()
         return false
     }
     return true
 })
+
+function switchGuideline(evt) {
+    if (evt.target.className.match("guideline")) {
+        if (evt.target.className.match("orange")) {
+            evt.target.className = "yellow guideline"
+            guidelines[evt.target.dataset.index][1] = 0.9
+        } else if (evt.target.className.match("yellow")) {
+            evt.target.className = "green guideline"
+            guidelines[evt.target.dataset.index][1] = 1
+        } else if (evt.target.className.match("green") || evt.target.className.match("red")) {
+            evt.target.className = "orange guideline"
+            guidelines[evt.target.dataset.index][1] = 0.8
+        }
+    }
+}
+
+document.body.addEventListener("mousedown", switchGuideline)
+document.body.addEventListener("touchstart", switchGuideline)
 
 slider.addEventListener("input", () => {
     cameraX = getSliderX()
