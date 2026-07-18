@@ -179,7 +179,7 @@ function switchGuideline(evt) {
 }
 
 document.body.addEventListener("mousedown", switchGuideline)
-document.body.addEventListener("touchstart", switchGuideline)
+// document.body.addEventListener("touchstart", switchGuideline)
 
 slider.addEventListener("input", () => {
     cameraX = getSliderX()
