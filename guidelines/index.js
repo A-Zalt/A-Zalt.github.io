@@ -7,6 +7,7 @@ let prevDate;
 let startPlayDate;
 let cameraX = 0;
 let prevValue = 0
+let startSliderX = 0
 const audio = new Audio();
 const glMap = {}
 glMap[0.7] = "red"
@@ -58,7 +59,7 @@ function getSliderX() {
     return lastX * (slider.value / 100)
 }
 function getCurrentTime() {
-    return Number(((Date.now() - startPlayDate) / 1000 + getSliderX() / 100).toFixed(2))
+    return Number(((Date.now() - startPlayDate) / 1000 + startSliderX / 100).toFixed(2))
 }
 
 function play() {
@@ -66,6 +67,7 @@ function play() {
     slider.disabled = isPlaying
     cameraX = getSliderX()
     if (isPlaying) {
+        startSliderX = getSliderX()
         render()
         playBtn.innerHTML = "Stop"
         inter = setInterval(() => {
@@ -97,6 +99,7 @@ function play() {
         audio.play()
     } else {
         x = 0;
+        // slider.value = Number((startSliderX / lastX * 100).toFixed(1))
         render()
         clearInterval(inter)
         playBtn.innerHTML = "Play"
@@ -119,6 +122,7 @@ function addGuideline(time, type) {
         lastRenderedIndex = guidelines.length - 1
     }
     reorderGuidelines()
+    render()
 }
 
 document.body.addEventListener("keydown", (evt) => {
@@ -152,7 +156,7 @@ greenBtn.addEventListener("click", () => {
 
 document.body.addEventListener("contextmenu", (evt) => {
     if (evt.target.id == "panel") return false
-    if (evt.target.className.match("guideline")) {
+    if (evt.target.classList.contains("guideline")) {
         guidelines = guidelines.filter((_, i) => i != evt.target.dataset.index)
         panel.removeChild(evt.target)
         if (lastRenderedIndex < guidelines.length)
@@ -164,14 +168,14 @@ document.body.addEventListener("contextmenu", (evt) => {
 })
 
 function switchGuideline(evt) {
-    if (evt.target.className.match("guideline")) {
-        if (evt.target.className.match("orange")) {
+    if (evt.target.classList.contains("guideline")) {
+        if (evt.target.classList.contains("orange")) {
             evt.target.className = "yellow guideline"
             guidelines[evt.target.dataset.index][1] = 0.9
-        } else if (evt.target.className.match("yellow")) {
+        } else if (evt.target.classList.contains("yellow")) {
             evt.target.className = "green guideline"
             guidelines[evt.target.dataset.index][1] = 1
-        } else if (evt.target.className.match("green") || evt.target.className.match("red")) {
+        } else if (evt.target.classList.contains("green") || evt.target.classList.contains("red")) {
             evt.target.className = "orange guideline"
             guidelines[evt.target.dataset.index][1] = 0.8
         }
@@ -179,7 +183,6 @@ function switchGuideline(evt) {
 }
 
 document.body.addEventListener("mousedown", switchGuideline)
-// document.body.addEventListener("touchstart", switchGuideline)
 
 slider.addEventListener("input", () => {
     cameraX = getSliderX()
