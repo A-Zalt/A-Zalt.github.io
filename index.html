@@ -669,7 +669,7 @@
         <br>
         <button id="phonetic" onclick='i_str.value = phonetic(i_str.value);updateInfo()'>Phonetic Alphabet</button>
         <br>
-        <input type="number" min="1" id="i_xor" placeholder="XOR Key"></input>
+        <input type="text" id="i_xor" placeholder="XOR Key"></input>
         <button id="xc" onclick='i_str.value = xor(i_str.value, document.getElementById("i_xor").value);updateInfo()'>XOR Cipher</button>
         <button id="xe" onclick='i_str.value = xorEncode(i_str.value, document.getElementById("i_xor").value);updateInfo()'>XOR Encode + Base64</button>
         <button id="xd" onclick='i_str.value = xorDecode(i_str.value, document.getElementById("i_xor").value);updateInfo()'>XOR Decode + Base64</button>
