@@ -415,18 +415,16 @@
         }
         return newstr
     }
-    old_btoa = btoa
-    btoa = function (str) {
-        return old_btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-            function toSolidBytes(match, p1) {
-                return String.fromCharCode('0x' + p1);
-        }));
+    function encodeBase64(str) {
+      const bytes = new TextEncoder().encode(str);
+      const binary = String.fromCharCode(...bytes);
+      return btoa(binary);
     }
-    old_atob = atob
-    atob = function b64DecodeUnicode(str) {
-        return decodeURIComponent(old_atob(str).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+    
+    function decodeBase64(base64) {
+      const binary = atob(base64);
+      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
     }
     function ROTn(text, map) {
         var R = new String()
@@ -484,8 +482,8 @@
         return s[0].toLowerCase() + s.substr(1)
     }
     function xor(str, key) { return String.fromCodePoint(...str.split('').map((char, i) => char.charCodeAt(0) ^ key.toString().charCodeAt(i % key.toString().length))) }
-    function xorEncode(str, key) { return btoa(xor(str, key)).replace(/\//g, '_').replace(/\+/g, '-'); }
-    function xorDecode(str, key) { return xor(atob(str.replace(/\//g, '_').replace(/\+/g, '-')).toString(), key) }
+    function xorEncode(str, key) { return encodeBase64(xor(str, key)).replace(/\//g, '_').replace(/\+/g, '-'); }
+    function xorDecode(str, key) { return xor(decodeBase64(str.replace(/\//g, '_').replace(/\+/g, '-')).toString(), key) }
     function mixedCase2(str) {
         let n = 1
         let strnew = ""
@@ -651,13 +649,13 @@
         <br>
         <button id="deunicode" onclick='i_str.value=i_str.value.trim().split(" ").map(e => String.fromCodePoint(parseInt(e, document.getElementById("hex").checked ? 16 : document.getElementById("dec").checked ? 10 : 2))).join("");updateInfo()'>Convert Unicode codepoints to string</button>
         <br>
-        <button id="atob" onclick='i_str.value=atob(i_str.value);updateInfo()'>Decode from Base64</button>
+        <button id="atob" onclick='i_str.value=decodeBase64(i_str.value);updateInfo()'>Decode from Base64</button>
         <br>
         <button id="puny_d" onclick='i_str.value = punydecode(i_str.value);updateInfo()'>Decode from Punycode</button>
         <br>
         <button id="urlunescape" onclick='i_str.value=decodeURIComponent(i_str.value);updateInfo()'>decodeURIComponent()</button>
         <br>
-        <button id="btoa" onclick='i_str.value=btoa(i_str.value);updateInfo()'>Encode to Base64</button>
+        <button id="btoa" onclick='i_str.value=encodeBase64(i_str.value);updateInfo()'>Encode to Base64</button>
         <br>
         <button id="puny_e" onclick='i_str.value = punyencode(i_str.value);updateInfo()'>Encode to Punycode</button>
         <br>
